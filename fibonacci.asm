@@ -1,32 +1,35 @@
-; AddTwo.asm - adds two 32-bit integers.
-; Chapter 3 example
+COMMENT °
+
+| Programa para calcular secuencia de fibonacci en ensamblador
+|Erick Renato Vega Cerón
+| Ingeniería en Sistemas Computacionales
+
+°
 
 include irvine32.inc
 
-.data
-val1 SDWORD 8
-val2 SDWORD -15
-val3 SDWORD 20
-
 .code
 main proc
-	mov ebx,1
+;valores iniciales
+	mov edx,1	;primer valor
+	mov ebx,0	;segundo valor
+
 	mov eax,0
-	call writeInt
+;variable contador
 	mov ecx,10
+;inicio del bucle
 	ETIQUETA1:
-		add eax,ebx
-		mov ebx,eax
+		
+		add edx,ebx ;se suman los dos valores y se guarda en reg edx
+		mov eax,edx	;se manda el resultado de dx a registro ax para muestra en pantalla
+		mov edx,ebx ;se recorre el segundo valor a la primera posición
+		mov ebx,eax	; y el resultado ocupa la segunda posicion
 
-		call writeInt
-		dec ecx		
-	jnz ETIQUETA1
+		call writeInt	;se manda a pantalla
+		dec ecx	;Se decrementa el contador
+	jnz ETIQUETA1	;si el contador aún no es cero, el programa salta de regreso a la etiqueta
 	
 	
-	
-	
-	
-
 
 	invoke ExitProcess,0
 main endp
