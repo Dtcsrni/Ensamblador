@@ -1,6 +1,6 @@
 COMMENT °
 
-| Programa para demostrar la bandera zero y sus cambios con operaciones de suma y resta
+| Programa para demostrar la bandera zero y signo sus cambios con operaciones de suma y resta
 | Erick Renato Vega Cerón
 | Ingeniería en Sistemas Computacionales
 
@@ -20,6 +20,10 @@ main proc
 		sub eax,1	;se resta 1 a eax
 		call dumpregs	;se muestran en pantalla las banderas en la cual se mira que la bandera ZF ha cambiado a 1 puesto que el valor de eax es 0
 
+		sub eax,1	;se resta 1 a eax
+
+		call dumpregs	;se muestra el cambio en la bandera de signo puesto que el valor ahora es negativo
+		
 	call writeInt	;se manda el resultado del registro eax a pantalla
 
 	invoke ExitProcess,0
