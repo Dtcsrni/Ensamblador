@@ -7,9 +7,9 @@ COMMENT °
 include irvine32.inc
 
 .data
-prompt BYTE "Ingrese otro numero: ",0|;define el contenido del primer mensaje a mostrar
+prompt BYTE "Ingrese otro numero: ",0 ;define el contenido del primer mensaje a mostrar
 prompt2 BYTE "Numero correcto ",0	;define el contenido del segundo mensaje a mostrar
-var DW 10	;define la variable var con numero 10, a comparar, de tipp	Word
+var DW 10	;	define la variable var con numero 10, a comparar, de tipp	Word
 .code
 main proc
 etiqueta1: 
