@@ -8,19 +8,22 @@ COMMENT °
 
 include irvine32.inc
 
+.data
+var1 SByte 01111111b
+
 .code
 main proc
 
-		mov eax,0	;se guarda el valor 0 en eax
+		mov al,var1	;se guarda el valor 0 en eax
 		call dumpregs	;se muestran en pantalla las banderas
 		
-		add eax,1 ;se suma 1 a eax
+		add al,1 ;se suma 1 a eax
 
 		call dumpregs	;se muestran en pantalla las banderas en la cual se mira que la bandera ZF ha cambiado a 0 puesto que el valor resultante de la operación aritmética no es cero
-		sub eax,1	;se resta 1 a eax
+		sub al,1	;se resta 1 a eax
 		call dumpregs	;se muestran en pantalla las banderas en la cual se mira que la bandera ZF ha cambiado a 1 puesto que el valor de eax es 0
 
-		sub eax,1	;se resta 1 a eax
+		sub al,1	;se resta 1 a eax
 
 		call dumpregs	;se muestra el cambio en la bandera de signo puesto que el valor ahora es negativo
 		
