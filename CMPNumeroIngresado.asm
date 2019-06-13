@@ -9,15 +9,15 @@ include irvine32.inc
 .data
 prompt BYTE "Ingrese otro numero: ",0 ;define el contenido del primer mensaje a mostrar
 prompt2 BYTE "Numero correcto ",0	;define el contenido del segundo mensaje a mostrar
-var DW 11	;	define la variable var con numero 10, a comparar, de tipp	Word
+var BYTE 11	;	define la variable var con numero 10, a comparar, de tipp	Word
 .code
 main proc
 etiqueta1: 
 mov  edx,OFFSET prompt	;se mueve al registro edx el contenido en offset del primer mensaje
       call WriteString	;se llama la instruccion escribir string con el contenido de edx
       call ReadInt	;se llama a la instrucción para leer un numero y almacenarlo en ax
-CMP var,ax	;se compara var con ax
-JLE etiqueta1	;si ax es menor que var, el programa regresa a etiqueta 1, si no avanza
+CMP var,al	;se compara var con ax
+JBE etiqueta1	;si ax es menor que var, el programa regresa a etiqueta 1, si no avanza
 ;a partir de aquí el programa avanza solo si ax es mayor que var, o sea 10
 mov  edx,OFFSET prompt2	;se mueve al registro edx el valor del segundo mensaje
        call WriteString	;se llama a la funcion WriteString para mostrar el mensaje guardado en edx
