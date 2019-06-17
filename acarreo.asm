@@ -15,7 +15,7 @@ main proc
 		mov eax,0FFFFFFFFH	;se llena el registro con 32 bits de datos
 		call dumpregs	;se muestran en pantalla las banderas previo a saturar el registro
 
-		add eax,2 ;se suma 1 al registro eax para saturar el registro y activar la bandera CF (acarreo)
+		add eax,2 ;se suma 2 al registro eax para saturar el registro y activar la bandera CF (acarreo)
 
 		call dumpregs	;se muestran en pantalla las banderas
 		

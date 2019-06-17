@@ -1,6 +1,6 @@
 COMMENT °
 
-| Programa para demostrar la bandera de acarreo y sus cambios utilizando suma
+| Programa para demostrar la bandera de acarreo y sus cambios utilizando suma y resta
 | Erick Renato Vega Cerón
 | Ingeniería en Sistemas Computacionales
 

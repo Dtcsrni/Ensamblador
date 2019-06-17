@@ -1,6 +1,6 @@
 COMMENT °
 | Programa de comparacion donde se le solicita un numero al usuario, si el numero es 
-|mayor que 10, muestra "correcto" (etiqueta2), si no, regresa a etiqueta1
+| mayor que 10, muestra "correcto" (etiqueta2), si no, regresa a etiqueta1
 | Erick Renato Vega Cerón
 | Ingeniería en Sistemas Computacionales
 °
@@ -9,10 +9,11 @@ include irvine32.inc
 .data
 prompt BYTE "Ingrese otro numero: ",0 ;define el contenido del primer mensaje a mostrar
 prompt2 BYTE "Numero correcto ",0	;define el contenido del segundo mensaje a mostrar
-var BYTE 11	;	define la variable var con numero 10, a comparar, de tipp	Word
+var BYTE 11	;	define la variable var con numero 10, a comparar, de tipo	Word
+
 .code
 main proc
-etiqueta1: 
+etiqueta1: ;se define el inicio de el bucle
 mov  edx,OFFSET prompt	;se mueve al registro edx el contenido en offset del primer mensaje
       call WriteString	;se llama la instruccion escribir string con el contenido de edx
       call ReadInt	;se llama a la instrucción para leer un numero y almacenarlo en ax

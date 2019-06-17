@@ -1,6 +1,6 @@
 COMMENT °
 
-| Programa para demostrar la bandera zero y signo sus cambios con operaciones de suma y resta
+| Programa para demostrar la bandera zero y la bandera signo y sus cambios con operaciones de suma y resta
 | Erick Renato Vega Cerón
 | Ingeniería en Sistemas Computacionales
 
@@ -9,7 +9,7 @@ COMMENT °
 include irvine32.inc
 
 .data
-var1 SByte 01111111b
+var1 SByte 01111111b	;se define en la variable 1 un byte con signo, con el máximo valor posible de tal variable antes de que cambie la bandera de signo por causa de Overflow
 
 .code
 main proc

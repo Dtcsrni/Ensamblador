@@ -14,9 +14,9 @@ main proc
 	mov edx,1	;primer valor
 	mov ebx,0	;segundo valor
 
-	mov eax,0
+	mov eax,0	;iniciar la secuencia con cero
 ;variable contador
-	mov ecx,10
+	mov ecx,12	;designar el contador a 12
 ;inicio del bucle
 	ETIQUETA1:
 		
