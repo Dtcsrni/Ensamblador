@@ -38,12 +38,14 @@
     
 inicio 
     MOVLW PORTA
+    goto rotar
     
     
-    
-    bcf  PORTB,LED
+  
     goto inicio
-
+rotar
+    RLF	W,0
+    MOVWF PORTB
 
 END    
     
