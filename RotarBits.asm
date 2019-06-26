@@ -30,13 +30,13 @@
     bsf PORTA,4		;mandar un 1 al puerto a, bit 4 para definirlo como entrada
     
     bcf PORTB,0		;mandar un 0 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,1		;mandar un 1 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,2		;mandar un 2 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,3		;mandar un 3 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,4		;mandar un 4 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,5		;mandar un 5 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,6		;mandar un 6 al puerto b, bit 0 para definirlo como salida
-    bcf PORTB,7		;mandar un 7 al puerto b, bit 0 para definirlo como salida
+    bcf PORTB,1		;mandar un 0 al puerto b, bit 1 para definirlo como salida
+    bcf PORTB,2		;mandar un 0 al puerto b, bit 2 para definirlo como salida
+    bcf PORTB,3		;mandar un 0 al puerto b, bit 3 para definirlo como salida
+    bcf PORTB,4		;mandar un 0 al puerto b, bit 4 para definirlo como salida
+    bcf PORTB,5		;mandar un 0 al puerto b, bit 5 para definirlo como salida
+    bcf PORTB,6		;mandar un 0 al puerto b, bit 6 para definirlo como salida
+    bcf PORTB,7		;mandar un 0 al puerto b, bit 7 para definirlo como salida
     
     bcf STATUS,RP0	;limpiar el registro de status
     
