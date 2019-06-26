@@ -1,4 +1,3 @@
-
 ; PIC16F84A Configuration Bit Settings
 
 ; Assembly source line config statements
@@ -19,20 +18,20 @@
 
     BSF STATUS, RP0
     
-    bsf TRISA,0
-    bsf TRISA,1
-    bsf TRISA,2
-    bsf TRISA,3
-    bsf TRISA,4
+    bsf PORTA,0
+    bsf PORTA,1
+    bsf PORTA,2
+    bsf PORTA,3
+    bsf PORTA,4
     
-    bcf TRISB,0
-    bcf TRISB,1
-    bcf TRISB,2
-    bcf TRISB,3
-    bcf TRISB,4
-    bcf TRISB,5
-    bcf TRISB,6
-    bcf TRISB,7
+    bcf PORTB,0
+    bcf PORTB,1
+    bcf PORTB,2
+    bcf PORTB,3
+    bcf PORTB,4
+    bcf PORTB,5
+    bcf PORTB,6
+    bcf PORTB,7
     
     bcf STATUS,RP0
     
@@ -40,15 +39,14 @@
     
     
 inicio 
-    MOVLW PORTA
+    MOVFW PORTA
     goto rotar   
   
    
 rotar
-    RLF	W,0
+    RLF	PORTA,0
     MOVWF PORTB
     goto inicio
 
 END    
     
-
