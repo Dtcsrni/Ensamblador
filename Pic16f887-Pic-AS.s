@@ -32,16 +32,27 @@
 ;
 
 MAIN:
-	BANKSEL		TRISB
+    BANKSEL TRISB
+    BCF	TRISB,0     
+    BANKSEL PORTB
+    
+    BANKSEL TRISA
+    BCF	TRISA,0     
+    BANKSEL PORTA
+    
+    BANKSEL TRISC
+    BSF	TRISC,0     
+    BANKSEL PORTC
 	
-    BCF 	    TRISB,0     
-	
-	BANKSEL		PORTB
 MainLoop:
     BCF		    PORTB,0
 	CALL		DELAY
     BSF			PORTB,0 
 	CALL		DELAY
+	
+    BTFSC PORTC,0
+    BSF	  PORTA,0
+    
     GOTO	    MainLoop            ; Do it again...
      
   
@@ -58,8 +69,4 @@ DELAY_LOOP: ;Start delay loop
         retlw 0 ;Else return from the subroutine
 
 
-
-;
-; Declare Power-On-Reset entry point
-;
     END     MAIN
