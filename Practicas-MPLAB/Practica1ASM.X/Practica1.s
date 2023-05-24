@@ -19,7 +19,10 @@
   CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
 
 // config statements should precede project file includes.
-#include <xc.inc>
+#include <xc.inc> 
+  ;directiva de inclusión para un archivo de encabezado específico 
+  ;del compilador que proporciona definiciones y configuraciones específicas 
+  ;del microcontrolador PIC16F887.
 
 ; PIC16F877A Configuration Bit Settings
 
