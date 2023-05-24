@@ -29,11 +29,19 @@
 ;
 ;   Section used for main code
     PSECT   MainCode,global,class=CODE,delta=2
-;
+;  Etiqueta MainCode, es donde se encuentra el código principal.
 ; Initialize the PIC hardware
 ;
 
-MAIN:
+MAIN:  ;Marca el punto de inicio del programa principal.
+  ;serie de instrucciones BANKSEL que se utilizan para seleccionar 
+  ;los bancos de registro adecuados antes de realizar operaciones 
+  ;en puertos específicos. 
+  ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto 
+  ;para configurar el puerto B como salida
+  ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
+  ;en los puertos seleccionados. 
+  ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
     BANKSEL TRISB
     BCF	TRISB,0     
     BANKSEL PORTB
@@ -45,7 +53,10 @@ MAIN:
     BANKSEL TRISC
     BSF	TRISC,0     
     BANKSEL PORTC
-	
+    ;Después de configurar los puertos, el programa entra en un bucle principal 
+    ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
+    ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
+    ;DELAY para crear una pausa.
 MainLoop:
     BCF		    PORTB,0
 	CALL		DELAY
@@ -57,7 +68,8 @@ MainLoop:
     
     GOTO	    MainLoop            ; Do it again...
      
-  
+    ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
+    ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
 DELAY: ;Start DELAY subroutine here
         movlw 10 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
