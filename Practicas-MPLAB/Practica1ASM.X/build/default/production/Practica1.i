@@ -2507,6 +2507,9 @@ MAIN: ;Marca el punto de inicio del programa principal.
     ;de un pin específico del puerto B, seguido de una llamada a la subrutina
     ;DELAY para crear una pausa.
 MainLoop:
+    BTFSS PORTC,0
+    BCF PORTA,0
+
     BCF PORTB,0
  CALL DELAY
     BSF PORTB,0
