@@ -1,0 +1,64 @@
+__S0 800 0 ABS 0
+__S1 0 0 ABS 0
+__S3 0 0 ABS 0
+__Hconfig 2009 0 CONFIG 4
+__Lconfig 0 0 CONFIG 4
+__Hcode 0 0 ABS 0
+__Lcode 0 0 ABS 0
+__Hdata 0 0 ABS 0
+__Ldata 0 0 ABS 0
+__HMainCode 0 0 ABS 0
+__LMainCode 0 0 ABS 0
+__Hudata_bank0 0 0 ABS 0
+__Ludata_bank0 0 0 ABS 0
+__Hudata_shr 0 0 ABS 0
+__Ludata_shr 0 0 ABS 0
+__H__absolute__ 0 0 ABS 0
+__L__absolute__ 0 0 ABS 0
+__Hedata 0 0 ABS 0
+__Ledata 0 0 ABS 0
+__Hudata 0 0 ABS 0
+__Ludata 0 0 ABS 0
+__Hudata_bank1 0 0 ABS 0
+__Ludata_bank1 0 0 ABS 0
+__Hspace_0 800 0 ABS 0
+__Lspace_0 0 0 ABS 0
+__Hspace_1 0 0 ABS 0
+__Lspace_1 0 0 ABS 0
+__Hspace_3 0 0 ABS 0
+__Lspace_3 0 0 ABS 0
+__Hspace_4 4010 0 ABS 0
+__Lspace_4 0 0 ABS 0
+__Hudata_bank2 0 0 ABS 0
+__Ludata_bank2 0 0 ABS 0
+__Hudata_bank3 0 0 ABS 0
+__Ludata_bank3 0 0 ABS 0
+%segments
+MainCode FC4 FFF CODE FC4 0
+%locals
+build/default/production/Practica1.o
+Practica1.s
+45 7E2 0 CODE 0
+46 7E4 0 CODE 0
+47 7E5 0 CODE 0
+49 7E7 0 CODE 0
+50 7E9 0 CODE 0
+51 7EA 0 CODE 0
+53 7EC 0 CODE 0
+54 7EE 0 CODE 0
+55 7EF 0 CODE 0
+61 7F1 0 CODE 0
+62 7F2 0 CODE 0
+63 7F3 0 CODE 0
+64 7F4 0 CODE 0
+66 7F5 0 CODE 0
+67 7F6 0 CODE 0
+69 7F7 0 CODE 0
+75 7F8 0 CODE 0
+76 7F9 0 CODE 0
+77 7FA 0 CODE 0
+80 7FB 0 CODE 0
+81 7FC 0 CODE 0
+82 7FD 0 CODE 0
+83 7FE 0 CODE 0
+84 7FF 0 CODE 0
