@@ -66,10 +66,11 @@ MainLoop:
     BTFSC PORTC,0
     BSF	  PORTA,0
     
-    GOTO	    MainLoop            ; Do it again...
+    GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
      
     ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
     ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
+ 
 DELAY: ;Start DELAY subroutine here
         movlw 10 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
