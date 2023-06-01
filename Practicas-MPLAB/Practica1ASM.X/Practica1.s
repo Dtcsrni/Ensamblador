@@ -1,5 +1,6 @@
 ; Configuración de bits de configuración del PIC16F887
 
+    
 ; Configuraciones de líneas de origen de código Assembly
 
 ; CONFIG1
