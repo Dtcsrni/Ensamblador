@@ -1,79 +1,71 @@
-; Configuraci贸n de bits de configuraci贸n del PIC16F887
 
-    
-; Configuraciones de l铆neas de origen de c贸digo Assembly
+; PIC16F887 Configuration Bit Settings
+
+; Assembly source line config statements
 
 ; CONFIG1
-  CONFIG  FOSC = INTRC_CLKOUT   ; Bits de selecci贸n del oscilador (oscilador INTOSC: funci贸n CLKOUT en pin RA6/OSC2/CLKOUT, funci贸n I/O en pin RA7/OSC1/CLKIN)
-  CONFIG  WDTE = ON             ; Bit de habilitaci贸n del Watchdog Timer (WDT habilitado)
-  CONFIG  PWRTE = OFF           ; Bit de habilitaci贸n del Power-up Timer (PWRT deshabilitado)
-  CONFIG  MCLRE = ON            ; Bit de selecci贸n de funci贸n del pin RE3/MCLR (funci贸n del pin RE3/MCLR es MCLR)
-  CONFIG  CP = OFF              ; Bit de protecci贸n de c贸digo (protecci贸n de c贸digo de memoria de programa deshabilitada)
-  CONFIG  CPD = OFF             ; Bit de protecci贸n de c贸digo de datos (protecci贸n de c贸digo de memoria de datos deshabilitada)
-  CONFIG  BOREN = OFF           ; Bits de selecci贸n de reinicio por falta de alimentaci贸n (BOR deshabilitado)
-  CONFIG  IESO = OFF            ; Bit de conmutaci贸n interna/externa (modo de conmutaci贸n interna/externa deshabilitado)
-  CONFIG  FCMEN = OFF           ; Bit de habilitaci贸n del Monitor de Reloj Seguro (Fail-Safe Clock Monitor deshabilitado)
-  CONFIG  LVP = OFF             ; Bit de habilitaci贸n de programaci贸n a baja tensi贸n (pin RB3 tiene I/O digital, se debe usar HV en MCLR para programaci贸n)
+  CONFIG  FOSC = INTRC_CLKOUT   ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
+  CONFIG  WDTE = ON             ; Watchdog Timer Enable bit (WDT enabled)
+  CONFIG  PWRTE = OFF           ; Power-up Timer Enable bit (PWRT disabled)
+  CONFIG  MCLRE = ON            ; RE3/MCLR pin function select bit (RE3/MCLR pin function is MCLR)
+  CONFIG  CP = OFF              ; Code Protection bit (Program memory code protection is disabled)
+  CONFIG  CPD = OFF             ; Data Code Protection bit (Data memory code protection is disabled)
+  CONFIG  BOREN = OFF           ; Brown Out Reset Selection bits (BOR disabled)
+  CONFIG  IESO = OFF            ; Internal External Switchover bit (Internal/External Switchover mode is disabled)
+  CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor Enabled bit (Fail-Safe Clock Monitor is disabled)
+  CONFIG  LVP = OFF             ; Low Voltage Programming Enable bit (RB3 pin has digital I/O, HV on MCLR must be used for programming)
 
 ; CONFIG2
-  CONFIG  BOR4V = BOR40V        ; Bit de selecci贸n de reinicio por falta de alimentaci贸n (Brown-out Reset configurado a 4.0V)
-  CONFIG  WRT = OFF             ; Bits de habilitaci贸n de escritura de memoria de programa Flash (protecci贸n de escritura desactivada)
+  CONFIG  BOR4V = BOR40V        ; Brown-out Reset Selection bit (Brown-out Reset set to 4.0V)
+  CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
 
-; Las declaraciones de configuraci贸n deben preceder a las inclusiones de archivos del proyecto.
-#include <xc.inc> ; Inclusi贸n de la librer铆a de compilador
+// config statements should precede project file includes.
+#include <xc.inc>
 
-; Secci贸n utilizada para el c贸digo principal
+
+; Secci髇 utilizada para el c骴igo principal
 PSECT MainCode, global, class = CODE, delta = 2
 
 ; Inicializar el hardware del PIC
 
 MAIN:  ; Etiqueta que marca el punto de inicio del programa principal
 
-MAIN:  ;Marca el punto de inicio del programa principal.
-  ;serie de instrucciones BANKSEL que se utilizan para seleccionar 
-  ;los bancos de registro adecuados antes de realizar operaciones 
-  ;en puertos espec锟絝icos. 
-  ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto 
-  ;para configurar el puerto B como salida
-  ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
-  ;en los puertos seleccionados. 
-  ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
-    BANKSEL TRISB
-    BCF	TRISB,0     
-    BANKSEL PORTB
-    
-    BANKSEL TRISA
-    BCF	TRISA,0     
-    BANKSEL PORTA
-    
-    BANKSEL TRISC
-    BSF	TRISC,0     
-    BANKSEL PORTC
-    ;Despu锟絪 de configurar los puertos, el programa entra en un bucle principal 
-    ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
-    ;de un pin espec锟絝ico del puerto B, seguido de una llamada a la subrutina 
-    ;DELAY para crear una pausa.
-MainLoop:
-    BTFSS		PORTC,0
-    BCF			PORTA,0
-    
+  ; Configuraci髇 de puertos como entradas
+  BANKSEL TRISB ; Seleccionar el banco de registros para el puerto B
+  BCF TRISB, 0 ; Configurar el primer bit del puerto B como salida
+
+  BANKSEL TRISA
+  BCF	TRISA, 0 ; Configurar el segundo bit del puerto A como salida
+
+  BANKSEL TRISC
+  BSF	TRISC, 0 ; Configurar el segundo bit del puerto A como entrada
+  BANKSEL TRISC
+  BSF	TRISC, 1 ; Configurar el segundo bit del puerto A como entrada
+CicloPrincipal: ; Etiqueta que marca el inicio del ciclo principal
+       CALL		ESPERA
     BCF			PORTB,0
-	CALL		DELAY
+	CALL		ESPERA
     BSF			PORTB,0 
-	CALL		DELAY
 	
-    BTFSC PORTC,0
-    BSF	  PORTA,0
     
-    GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
-     
-    ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
-    ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
- 
-DELAY: ;Start DELAY subroutine here
-        movlw 10 ;Load initial value for the delay
-        movwf 0x10 ;Copy the value from working reg to the file register 0x10
-        movwf 0x11 ;Copy the value from working reg to the file register 0x11
+    BTFSC PORTC,0
+	BCF   PORTA,0
+    
+    BTFSC PORTC,0
+	BSF   PORTA,0
+	
+    
+
+  
+
+  GOTO	CicloPrincipal ; Volver al ciclo principal
+
+
+
+ESPERA: ; Subrutina ESPERA para generar un retardo
+  movlw 10 ; Cargar el literal 10 en el registro de trabajo (W)
+  movwf 0x10 ; Mover el valor del registro de trabajo a la direcci髇 de memoria 0x10
+  movwf 0x11 ; Mover el valor del registro de trabajo a la direcci髇 de memoria 0x11
 
 CICLO_ESPERA: ; Inicio del bucle de retardo
   decfsz 0x10, F ; Decrementar el valor del registro 0x10 y verificar si no es cero
@@ -82,4 +74,4 @@ CICLO_ESPERA: ; Inicio del bucle de retardo
   goto CICLO_ESPERA ; Si no es cero, volver al bucle de retardo
   retlw 0 ; Retornar de la subrutina
 
-END MAIN ; Finalizar la ejecuci贸n del programa
+END MAIN ; Finalizar la ejecuci髇 del programa

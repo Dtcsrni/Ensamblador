@@ -6,7 +6,7 @@
 ; Assembly source line config statements
 
 ; CONFIG1
-  CONFIG FOSC = INTRC_CLKOUT ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
+  CONFIG FOSC = INTRC_NOCLKOUT ; Oscillator Selection bits (INTOSCIO oscillator: I/O function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
   CONFIG WDTE = ON ; Watchdog Timer Enable bit (WDT enabled)
   CONFIG PWRTE = OFF ; Power-up Timer Enable bit (PWRT disabled)
   CONFIG MCLRE = ON ; RE3/MCLR pin function select bit (RE3/MCLR pin function is MCLR)
@@ -2469,71 +2469,79 @@ ENDM
 # 8 "C:/Program Files/Microchip/MPLABX/v6.10/packs/Microchip/PIC16Fxxx_DFP/1.4.149/xc8\\pic\\include\\xc.inc" 2 3
 # 22 "Practica1.s" 2
 
-  ;directiva de inclusión para un archivo de encabezado específico
-  ;del compilador que proporciona definiciones y configuraciones específicas
-  ;del microcontrolador PIC16F887.
-
-; PIC16F877A Configuration Bit Settings
-
-;
-; Section used for main code
-    PSECT MainCode,global,class=CODE,delta=2
-; Etiqueta MainCode, es donde se encuentra el código principal.
-; Initialize the PIC hardware
-;
-
-MAIN: ;Marca el punto de inicio del programa principal.
-  ;serie de instrucciones BANKSEL que se utilizan para seleccionar
-  ;los bancos de registro adecuados antes de realizar operaciones
-  ;en puertos específicos.
-  ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto
-  ;para configurar el puerto B como salida
-  ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits
-  ;en los puertos seleccionados.
-  ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
-    BANKSEL TRISB
-    BCF TRISB,0
-    BANKSEL PORTB
-
-    BANKSEL TRISA
-    BCF TRISA,0
-    BANKSEL PORTA
-
-    BANKSEL TRISC
-    BSF TRISC,0
-    BANKSEL PORTC
-    ;Después de configurar los puertos, el programa entra en un bucle principal
-    ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado
-    ;de un pin específico del puerto B, seguido de una llamada a la subrutina
-    ;DELAY para crear una pausa.
-MainLoop:
-    BCF PORTB,0
- CALL DELAY
-    BSF PORTB,0
- CALL DELAY
-
-    BTFSC PORTC,0
-    BSF PORTA,0
-
-    BTFSC PORTC,1
-    BCF PORTA,0
-
-    GOTO MainLoop ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
-
-    ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento
-    ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
-
-DELAY: ;Start DELAY subroutine here
-        movlw 10 ;Load initial value for the delay
-        movwf 0x10 ;Copy the value from working reg to the file register 0x10
-        movwf 0x11 ;Copy the value from working reg to the file register 0x11
-
-DELAY_LOOP: ;Start delay loop
-        decfsz 0x10, F ;Decrement the f register 0x10 and check if not zero
-        goto DELAY_LOOP ;If not then go to the DELAY_LOOP labe
-        decfsz 0x11, F ;Else decrement the f register 0x11, check if it is not 0
-        goto DELAY_LOOP ;If not then go to the DELAY_LOOP label
-        retlw 0 ;Else return from the subroutine
 
 
-    END MAIN
+PSECT MainCode,local,class=CODE,delta=2 ; PIC10/12/16
+  ;MainCode
+; psect barfunc,local,class=CODE,reloc=2 ; PIC18
+
+  MAIN: ;Maraca el punto del programa inicial
+  ;Configuracion de puertos como de salida y entrada
+
+  BANKSEL TRISB ;Selecciono el banco del purto "B"
+  BCF TRISB,0 ;Se coloca como salida el pin """"3"""
+  BANKSEL PORTB ;Envia la configuración del regisyro a la configuraciones
+
+  BANKSEL TRISA ;Selecciono el banco del purto "A"
+  BCF TRISA,1 ;Se coloca como salida el pin
+  BANKSEL PORTA ;Envia la configuración del registra a la configuraciones
+
+  BANKSEL TRISC ;Selecciono el banco del purto "C"
+  BSF TRISC,0 ;Se coloca como entrada el pin 0 del puerto C
+  BANKSEL PORTC ;Envia la configuración del regisyro a la configuraciones
+
+  BANKSEL TRISC ;Selecciono el banco del purto "C"
+  BSF TRISC,1 ;Se coloca como entrada el pin 0 del puerto C
+  BANKSEL PORTC ;Envia la configuración del regisyro a la configuraciones
+
+
+
+
+  MainLoop: ;Inicio de ciclo iterativo principal
+
+;Apagar y encender LED 1
+      BCF PORTB,0 ;Colocar a 0 el pin 0 del puesrto B (apagar led)
+
+ BSF PORTB,0 ;Colocar a 1 el pin 0 del puerto B (encender led)
+
+
+
+
+BTFSS PORTA, 1 ;SI VA ESTAR ENCENDIDO LO VA HA APAGAR
+ GOTO REVISARBTN1
+
+BTFSS PORTA, 1
+GOTO REVISARBTN2 ;SI ESRA ENCENDIDO LO VA ENCENDER
+
+GOTO MainLoop
+
+
+REVISARBTN1:
+ BTFSC PORTC,0 ;revisar el pin 0 del puerto C
+ BSF PORTA,1 ;Si el pin es 0 logico saltar la instruccion BSF
+
+
+ REVISARBTN2:
+     ;Revisar si el boton 2 esta precionado
+ BTFSC PORTC,1 ;revisar el pin 0 del puerto C
+ BCF PORTA,1 ;Si el pin es 1 logico saltar la instruccion BSF
+                ;Si el pin es 0 logico entrar la instruccion BSF
+
+
+
+DELAY:
+    movlw 2000 ;mueve el valor de una literal al registro de trabajo
+    movwf 0x10 ;Mueve del registro de trabajo a la direccion del argumento
+    movwf 0x11 ;Mover del registro del rabajo a la direccion del argumento
+
+
+
+DELAY_LOOP:
+    decfsz 0x10, F ;decrementa el registro F y checa si no es 0
+    goto DELAY_LOOP ;Regresa el ciclo de espera hasta que este encuetre la condición
+    decfsz 0x11, F ;
+    goto DELAY_LOOP
+    retlw 0 ;Fianliza en ciclo de espera y se regresa al llamado principa
+
+
+END MAIN ;Finaluiza la ejecución ddel programa

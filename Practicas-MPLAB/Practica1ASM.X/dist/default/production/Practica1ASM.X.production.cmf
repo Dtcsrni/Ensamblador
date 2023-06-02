@@ -12,7 +12,7 @@
 # in delta units.  Any other numeric values are decimal.
 %PSECTS
 $build/default/production/Practica1.o
-MainCode CODE 0 7E0 7E0 20 2 1
+MainCode CODE 0 7D9 7D9 27 2 1
 config CONFIG 4 2007 2007 2 2 1
 # %UNUSED Section
 # This section enumerates the unused ranges of each CLASS. Each entry
@@ -28,12 +28,12 @@ BANK0 20-6F 1
 BANK1 A0-EF 1
 BANK2 110-16F 1
 BANK3 190-1EF 1
-CONST 0-7DF 2
+CONST 0-7D8 2
 CONST 800-1FFF 2
-ENTRY 0-7DF 2
+ENTRY 0-7D8 2
 ENTRY 800-1FFF 2
 IDLOC 2000-2003 2
-CODE 0-7DF 2
+CODE 0-7D8 2
 CODE 800-1FFF 2
 SFR0 0-1F 1
 SFR1 80-9F 1
@@ -41,9 +41,9 @@ SFR2 100-10F 1
 SFR3 180-18F 1
 COMMON 70-7F 1
 EEDATA 2100-21FF 2
-STRCODE 0-7DF 2
+STRCODE 0-7D8 2
 STRCODE 800-1FFF 2
-STRING 0-7DF 2
+STRING 0-7D8 2
 STRING 800-1FFF 2
 # %LINETAB Section
 # This section enumerates the file/line to address mappings.
@@ -59,32 +59,37 @@ STRING 800-1FFF 2
 # All other numeric values are in decimal.
 %LINETAB
 $build/default/production/Practica1.o
-7E0 MainCode CODE >45:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7E2 MainCode CODE >46:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7E3 MainCode CODE >47:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7E5 MainCode CODE >49:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7E7 MainCode CODE >50:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7E8 MainCode CODE >51:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7EA MainCode CODE >53:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7EC MainCode CODE >54:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7ED MainCode CODE >55:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7D9 MainCode CODE >32:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7DB MainCode CODE >33:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7DC MainCode CODE >34:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7DE MainCode CODE >36:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E0 MainCode CODE >37:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E1 MainCode CODE >38:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E3 MainCode CODE >40:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E5 MainCode CODE >41:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E6 MainCode CODE >42:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7E8 MainCode CODE >44:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7EA MainCode CODE >45:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7EB MainCode CODE >46:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7ED MainCode CODE >54:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7EE MainCode CODE >56:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
 7EF MainCode CODE >61:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
 7F0 MainCode CODE >62:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F1 MainCode CODE >63:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F2 MainCode CODE >64:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F3 MainCode CODE >66:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F4 MainCode CODE >67:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F5 MainCode CODE >69:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F6 MainCode CODE >70:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F7 MainCode CODE >72:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F8 MainCode CODE >78:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7F9 MainCode CODE >79:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FA MainCode CODE >80:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FB MainCode CODE >83:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FC MainCode CODE >84:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FD MainCode CODE >85:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FE MainCode CODE >86:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
-7FF MainCode CODE >87:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F1 MainCode CODE >64:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F2 MainCode CODE >65:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F3 MainCode CODE >67:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F4 MainCode CODE >71:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F5 MainCode CODE >72:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F6 MainCode CODE >77:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F7 MainCode CODE >78:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F8 MainCode CODE >84:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7F9 MainCode CODE >85:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FA MainCode CODE >86:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FB MainCode CODE >91:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FC MainCode CODE >92:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FD MainCode CODE >93:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FE MainCode CODE >94:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
+7FF MainCode CODE >95:C:\Users\DELL\Documents\ProyectosCUH\Ensamblador\Practicas-MPLAB\Practica1ASM.X\Practica1.s
 # %SYMTAB Section
 # An enumeration of all symbols in the program.
 # The beginning of the section is indicated by %SYMTAB.
@@ -123,13 +128,11 @@ __Lspace_0 0 0 ABS 0 - -
 __Lspace_1 0 0 ABS 0 - -
 __Lspace_3 0 0 ABS 0 - -
 __Lspace_4 0 0 ABS 0 - -
-__LMainCode 0 0 ABS 0 MainCode -
 __Ludata_bank0 0 0 ABS 0 udata_bank0 -
 __Ludata_bank1 0 0 ABS 0 udata_bank1 -
 __Ludata_bank2 0 0 ABS 0 udata_bank2 -
 __Ludata_bank3 0 0 ABS 0 udata_bank3 -
 __H__absolute__ 0 0 ABS 0 __absolute__ -
-__HMainCode 0 0 ABS 0 MainCode -
 __Hudata_shr 0 0 ABS 0 udata_shr -
 __Ludata_shr 0 0 ABS 0 udata_shr -
 # %SPLITSTAB Section
@@ -156,7 +159,7 @@ __Ludata_shr 0 0 ABS 0 udata_shr -
 # and size are in units of delta. The file address is in units of bytes.
 # All other numeric quantities are in decimal.
 %SEGMENTS
-MainCode 0 7E0 FC0 20 2
+MainCode 0 7D9 FB2 27 2
 # %NOTES Section
 # This section contains data of all the note-psects.  The beginning of the section
 # is indicated by %NOTES. The first line indicates the name and decimal
