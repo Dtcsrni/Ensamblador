@@ -1,4 +1,3 @@
-
 ; PIC16F887 Configuration Bit Settings
 
 ; Assembly source line config statements
@@ -20,58 +19,72 @@
   CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
 
 // config statements should precede project file includes.
-#include <xc.inc>
+#include <xc.inc> 
+  ;directiva de inclusi√≥n para un archivo de encabezado espec√≠fico 
+  ;del compilador que proporciona definiciones y configuraciones espec√≠ficas 
+  ;del microcontrolador PIC16F887.
 
+; PIC16F877A Configuration Bit Settings
 
-; SecciÛn utilizada para el cÛdigo principal
-PSECT MainCode, global, class = CODE, delta = 2
+;
+;   Section used for main code
+    PSECT   MainCode,global,class=CODE,delta=2
+;  Etiqueta MainCode, es donde se encuentra el c√≥digo principal.
+; Initialize the PIC hardware
+;
 
-; Inicializar el hardware del PIC
-
-MAIN:  ; Etiqueta que marca el punto de inicio del programa principal
-
-  ; ConfiguraciÛn de puertos como entradas
-  BANKSEL TRISB ; Seleccionar el banco de registros para el puerto B
-  BCF TRISB, 0 ; Configurar el primer bit del puerto B como salida
-
-  BANKSEL TRISA
-  BCF	TRISA, 0 ; Configurar el segundo bit del puerto A como salida
-
-  BANKSEL TRISC
-  BSF	TRISC, 0 ; Configurar el segundo bit del puerto A como entrada
-  BANKSEL TRISC
-  BSF	TRISC, 1 ; Configurar el segundo bit del puerto A como entrada
-CicloPrincipal: ; Etiqueta que marca el inicio del ciclo principal
-       CALL		ESPERA
-    BCF			PORTB,0
-	CALL		ESPERA
+MAIN:  ;Marca el punto de inicio del programa principal.
+  ;serie de instrucciones BANKSEL que se utilizan para seleccionar 
+  ;los bancos de registro adecuados antes de realizar operaciones 
+  ;en puertos espec√≠ficos. 
+  ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto 
+  ;para configurar el puerto B como salida
+  ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
+  ;en los puertos seleccionados. 
+  ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
+    BANKSEL TRISB
+    BCF	TRISB,0     
+    BANKSEL PORTB
+    
+    BANKSEL TRISA
+    BCF	TRISA,0     
+    BANKSEL PORTA
+    
+    BANKSEL TRISC
+    BSF	TRISC,0     
+    BANKSEL PORTC
+    ;Despu√©s de configurar los puertos, el programa entra en un bucle principal 
+    ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
+    ;de un pin espec√≠fico del puerto B, seguido de una llamada a la subrutina 
+    ;DELAY para crear una pausa.
+MainLoop:
+    BCF		    PORTB,0
+	CALL		DELAY
     BSF			PORTB,0 
+	CALL		DELAY
 	
-    
     BTFSC PORTC,0
-	BCF   PORTA,0
+    BSF	  PORTA,0
     
-    BTFSC PORTC,0
-	BSF   PORTA,0
-	
+    BTFSC PORTC,1
+    BCF   PORTA,0
     
+    GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
+     
+    ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
+    ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
+ 
+DELAY: ;Start DELAY subroutine here
+        movlw 10 ;Load initial value for the delay
+        movwf 0x10 ;Copy the value from working reg to the file register 0x10
+        movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
-  
+DELAY_LOOP: ;Start delay loop
+        decfsz 0x10, F ;Decrement the f register 0x10 and check if not zero
+        goto DELAY_LOOP ;If not then go to the DELAY_LOOP labe
+        decfsz 0x11, F ;Else decrement the f register 0x11, check if it is not 0
+        goto DELAY_LOOP ;If not then go to the DELAY_LOOP label
+        retlw 0 ;Else return from the subroutine
 
-  GOTO	CicloPrincipal ; Volver al ciclo principal
 
-
-
-ESPERA: ; Subrutina ESPERA para generar un retardo
-  movlw 10 ; Cargar el literal 10 en el registro de trabajo (W)
-  movwf 0x10 ; Mover el valor del registro de trabajo a la direcciÛn de memoria 0x10
-  movwf 0x11 ; Mover el valor del registro de trabajo a la direcciÛn de memoria 0x11
-
-CICLO_ESPERA: ; Inicio del bucle de retardo
-  decfsz 0x10, F ; Decrementar el valor del registro 0x10 y verificar si no es cero
-  goto CICLO_ESPERA ; Si no es cero, volver al bucle de retardo
-  decfsz 0x11, F ; Si es cero, decrementar el valor del registro 0x11 y verificar si no es cero
-  goto CICLO_ESPERA ; Si no es cero, volver al bucle de retardo
-  retlw 0 ; Retornar de la subrutina
-
-END MAIN ; Finalizar la ejecuciÛn del programa
+    END     MAIN
