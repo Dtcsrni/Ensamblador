@@ -20,8 +20,8 @@
 
 // config statements should precede project file includes.
 #include <xc.inc> 
-  ;directiva de inclusi髇 para un archivo de encabezado espec韋ico 
-  ;del compilador que proporciona definiciones y configuraciones espec韋icas 
+  ;directiva de inclusi贸n para un archivo de encabezado espec铆fico 
+  ;del compilador que proporciona definiciones y configuraciones espec铆ficas 
   ;del microcontrolador PIC16F887.
 
 ; PIC16F877A Configuration Bit Settings
@@ -29,61 +29,106 @@
 ;
 ;   Section used for main code
     PSECT   MainCode,global,class=CODE,delta=2
-;  Etiqueta MainCode, es donde se encuentra el c骴igo principal.
+;  Etiqueta MainCode, es donde se encuentra el c贸digo principal.
 ; Initialize the PIC hardware
 ;
 
 MAIN:  ;Marca el punto de inicio del programa principal.
   ;serie de instrucciones BANKSEL que se utilizan para seleccionar 
   ;los bancos de registro adecuados antes de realizar operaciones 
-  ;en puertos espec韋icos. 
+  ;en puertos espec铆ficos. 
   ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto 
   ;para configurar el puerto B como salida
   ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
   ;en los puertos seleccionados. 
   ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
-    BANKSEL TRISB
-    BCF	TRISB,0     
-    BANKSEL PORTB
-    
-    BANKSEL TRISA
-    BCF	TRISA,0     
-    BANKSEL PORTA
-    
-    BANKSEL TRISC
-    BSF	TRISC,0     
-    BANKSEL PORTC
-    ;Despu閟 de configurar los puertos, el programa entra en un bucle principal 
+   BANKSEL TRISA
+   BCF TRISA,0 ;Set RA0 to output
+   BCF TRISA,1 ;Set RA0 to output
+   BCF TRISA,2 ;Set RA0 to output
+   BCF TRISA,3 ;Set RA0 to output
+   BCF TRISA,4 ;Set RA0 to output
+   BCF TRISA,5 ;Set RA0 to output
+   BCF TRISA,6 ;Set RA0 to output
+   
+   BANKSEL TRISD
+   BSF TRISD,0 ;Set RA0 to input
+   BSF TRISD,1 ;Set RA0 to input
+   BSF TRISD,2 ;Set RA0 to input
+   
+   BANKSEL TRISB;Se definen LEDS como salida
+   BCF TRISB, 0
+   BCF TRISB, 1
+   BCF TRISB, 2
+   BCF TRISB, 3
+   
+    ;Despu茅s de configurar los puertos, el programa entra en un bucle principal 
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
-    ;de un pin espec韋ico del puerto B, seguido de una llamada a la subrutina 
+    ;de un pin espec铆fico del puerto B, seguido de una llamada a la subrutina 
     ;DELAY para crear una pausa.
+    MOVLW b'00000000' ;  Se define el valor del registro de trabajo con la literal 0
 MainLoop:
-    BCF		    PORTB,0
-	CALL		DELAY
-    BSF			PORTB,0 
-	CALL		DELAY
-	
-    BTFSC PORTC,0
-    goto INCREMENTO
-    
-    BTFSC PORTC,1
-    goto DECREMENTO
     
     
     
+  ;Inicio de secci贸n botones y condiciones
+    BTFSC PORTD, 0 ;Si se presiona el bot贸n en RD0...
+    INCF W; Incrementar el valor de 0x10 en 1
+    
+    BTFSC PORTD, 1; Si se presiona el bot贸n en RD1...
+    DECF W ; Decrementar el valor de 0x10 en 1
+    
+    BTFSC PORTD, 2 ; Si se presiona el bot贸n en RD2...
+    GOTO BORRAR	; Ir a subrutina BORRAR
+    ;Se limpia el estado de los botones
+    
+    CLRF PORTD
+    
+    GOTO CALCULARLEDS
     
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
      
+CALCULARLEDS:
+   
+    
+    SUBWF 1,W
+    GOTO ACTIVARPORTB0
+    
+    SUBWF 2,W
+    GOTO ACTIVARPORTB1
+    
+    SUBWF 3,W
+    GOTO ACTIVARPORTB2
+    
+    SUBWF 4,W
+    GOTO ACTIVARPORTB3
+  
+    
+ACTIVARPORTB0:
+    CLRF PORTB
+    BSF PORTB, 0
+    
+ACTIVARPORTB1:    
+    CLRF PORTB
+    BSF PORTB, 1
+    return
+    
+ACTIVARPORTB2:
+    CLRF PORTB
+    BSF PORTB, 2
+    return
+ACTIVARPORTB3:
+    CLRF PORTB
+    BSF PORTB, 3
+    return
+    
     ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
     ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
-INCREMENTO:
-    banksel registro
-    incf registro, f
-DECREMENTO:
-    banksel registro
-    decf registro,f
-    
-    
+BORRAR:
+    CLRW ;Limpiar registro de trabajo
+    CLRF CNT ;Limpiar el valor en 0x10
+    return
+ 
 DELAY: ;Start DELAY subroutine here
         movlw 10 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
