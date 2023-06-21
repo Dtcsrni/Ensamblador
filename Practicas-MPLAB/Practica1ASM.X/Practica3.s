@@ -42,28 +42,42 @@ MAIN:  ;Marca el punto de inicio del programa principal.
   ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
   ;en los puertos seleccionados. 
   ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
-   BANKSEL TRISA
-   BCF TRISA,0 ;Set RA0 to output
-   BCF TRISA,1 ;Set RA0 to output
-   BCF TRISA,2 ;Set RA0 to output
-   BCF TRISA,3 ;Set RA0 to output
-   BCF TRISA,4 ;Set RA0 to output
-   BCF TRISA,5 ;Set RA0 to output
-   BCF TRISA,6 ;Set RA0 to output
+   BANKSEL TRISB
+   BCF TRISB,0 ;Set RA0 to output
+   BCF TRISB,1 ;Set RA0 to output
+   BCF TRISB,2 ;Set RA0 to output
+   BCF TRISB,3 ;Set RA0 to output
+   BCF TRISB,4 ;Set RA0 to output
+   BCF TRISB,5 ;Set RA0 to output
+   BCF TRISB,6 ;Set RA0 to output
+   BANKSEL PORTB
+  
    
    BANKSEL TRISD
    BSF TRISD,0 ;Set RA0 to input
    BSF TRISD,1 ;Set RA0 to input
    BSF TRISD,2 ;Set RA0 to input
+   BANKSEL PORTD
+   CLRF PORTB
    
    BANKSEL TRISC;Se definen LEDS como salida
    BCF TRISC, 0
-   BANKSEL TRISC;Se definen LEDS como salida
    BCF TRISC, 1
-   BANKSEL TRISC;Se definen LEDS como salida
    BCF TRISC, 2
-   BANKSEL TRISC;Se definen LEDS como salida
    BCF TRISC, 3
+   BCF TRISC, 4
+   BCF TRISC, 5
+   BCF TRISC, 6
+   BCF TRISC, 7
+   BANKSEL PORTC
+   CLRF PORTC
+   
+   BANKSEL TRISE;Se definen LEDS como salida
+   BCF TRISE, 0
+   BCF TRISE, 1
+   BANKSEL PORTE
+   CLRF PORTE
+   
    
     ;Después de configurar los puertos, el programa entra en un bucle principal 
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
@@ -71,43 +85,45 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     ;DELAY para crear una pausa.
     NUMERO EQU 0x12 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
     CLRF NUMERO ;Limpio la variable NUMERO
-    MOVLW 4 ;Se coloca la literal 4 en el registro de trabajo
+    MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
     MOVWF NUMERO ;Mover el contenido del registro de trabajo W, a variable numero
     CLRW ;Limpiar registro de trabajo
-    BCF	PORTD, 0 ; Colocar en 1 lógico el puerto D1
-MainLoop:
     
     
     
+MainLoop:  
+        
   ;Inicio de sección botones y condiciones
-    BTFSS PORTD, 0 ;Si se presiona el botón en RD0...
+    BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
     
-    
-    BTFSS PORTD, 1; Si se presiona el botón en RD1...
+    BTFSC PORTD, 1; Si se presiona el botón en RD1...
     GOTO DECREMENTO
     
-    /*
+    
     BTFSC PORTD, 2 ; Si se presiona el botón en RD2...
     GOTO BORRAR	; Ir a subrutina BORRAR
     ;Se limpia el estado de los botones
-     LRF PORTD
-    */
-    
-    
-   
+     
     
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
+BORRAR:
+    MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF NUMERO ;Mover el contenido del registro de trabajo W, a variable numero
+    GOTO ENCENDERLED0
+    
 INCREMENTO:
     ; Comparar si NUMERO es igual a 0
-    MOVLW 4     ; Cargar el valor 0 en el registro W
+    MOVLW 10     ; Cargar el valor 0 en el registro W
     SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     INCF NUMERO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
     MOVF NUMERO, 0 ;Mover el contenido de la variable NUMERO a W, para monitoreo
-    BCF PORTC, 0 
+     CALL DELAY
+     CALL DELAY
+     CALL DELAY
    ; Llamar a la subrutina si NUMERO es igual a 0
-   GOTO MainLoop
+    GOTO CALCULARLEDS
 DECREMENTO:
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
@@ -115,67 +131,241 @@ DECREMENTO:
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     DECF NUMERO
     MOVF NUMERO, 0
-    BCF PORTC, 0
-    GOTO MainLoop
+     CALL DELAY
+     CALL DELAY
+     CALL DELAY
+     GOTO CALCULARLEDS
    ; Llamar a la subrutina si NUMERO es igual a 0
     
-    /*
+    
 CALCULARLEDS:
-   
-; Comparar si NUMERO es igual a 0
+    ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
     SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    CALL ACTIVARPORT0
-    retlw 0 ;Else return from the subroutine
-   ; Llamar a la subrutina si NUMERO es igual a 0
+    GOTO ENCENDERLED0
     
-    ; Comparar si NUMERO es igual a 0
+   
+    
+     ; Comparar si NUMERO es igual a 0
     MOVLW 1     ; Cargar el valor 0 en el registro W
     SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    CALL ACTIVARPORT0   ; Llamar a la subrutina si NUMERO es igual a 0
-    retlw 0 ;Else return from the subroutine
+    GOTO ENCENDERLED1
+  
+   
+    
     ; Comparar si NUMERO es igual a 0
     MOVLW 2     ; Cargar el valor 0 en el registro W
     SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    CALL ACTIVARPORT0   ; Llamar a la subrutina si NUMERO es igual a 0
-    retlw 0 ;Else return from the subroutine
+    GOTO ENCENDERLED2
+   
+   
+    
     ; Comparar si NUMERO es igual a 0
     MOVLW 3     ; Cargar el valor 0 en el registro W
     SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    CALL ACTIVARPORT0   ; Llamar a la subrutina si NUMERO es igual a 0
-    retlw 0 ;Else return from the subroutine
-    */
-ACTIVARPORT0:
-    CLRF PORTC
+    GOTO ENCENDERLED3
+    
+    
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 4     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED4
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 5     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED5
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 6     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED6
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 7     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED7
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 8     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED8
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 9     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED9
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 10     ; Cargar el valor 0 en el registro W
+    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED10
+    
+    
+    GOTO MainLoop
+
+ENCENDERLED0:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+    
+ENCENDERLED1:
     BSF PORTC, 0
-    retlw 0 ;Else return from the subroutine
-ACTIVARPORT1:    
-    CLRF PORTC
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+    
+ENCENDERLED2:
+    BCF PORTC, 0
     BSF PORTC, 1
-    retlw 0 ;Else return from the subroutine
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
     
-ACTIVARPORT2:
-    CLRF PORTC
+ENCENDERLED3:
+    BCF PORTC, 0
+    BCF PORTC, 1
     BSF PORTC, 2
-    retlw 0 ;Else return from the subroutine
-    
-ACTIVARPORT3:
-    CLRF PORTC
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+
+ENCENDERLED4:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
     BSF PORTC, 3
-    retlw 0 ;Else return from the subroutine    
-    ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
-    ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
-BORRAR:
-    CLRW ;Limpiar registro de trabajo
-    CLRF NUMERO ;Limpiar el valor en 0x10
-    retlw 0 ;Else return from the subroutine
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+    
+ ENCENDERLED5:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BSF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+ ENCENDERLED6:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BSF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+  ENCENDERLED7:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BSF PORTC, 6
+    BCF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+  ENCENDERLED8:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BSF PORTC, 7
+    BCF PORTE, 1
+    BCF PORTE, 2
+    CALL DELAY
+    GOTO MainLoop
+  ENCENDERLED9:
+    BCF PORTC, 0
+    BCF PORTC, 1
+    BCF PORTC, 2
+    BCF PORTC, 3
+    BCF PORTC, 4
+    BCF PORTC, 5
+    BCF PORTC, 6
+    BCF PORTC, 7
+    BSF PORTE, 0
+    CALL DELAY
+    GOTO MainLoop
+  ENCENDERLED10:
+    BSF PORTC, 0
+    BSF PORTC, 1
+    BSF PORTC, 2
+    BSF PORTC, 3
+    BSF PORTC, 4
+    BSF PORTC, 5
+    BSF PORTC, 6
+    BSF PORTC, 7
+    BSF PORTE, 0
+    CALL DELAY
+    GOTO MainLoop
+  
  
 DELAY: ;Start DELAY subroutine here
-        movlw 10 ;Load initial value for the delay
+        movlw 400 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
         movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
