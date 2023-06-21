@@ -4,7 +4,7 @@
 
 ; CONFIG1
   CONFIG  FOSC = INTRC_CLKOUT   ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
-  CONFIG  WDTE = OFF             ; Watchdog Timer Enable bit (WDT enabled)
+  CONFIG  WDTE = ON             ; Watchdog Timer Enable bit (WDT enabled)
   CONFIG  PWRTE = OFF           ; Power-up Timer Enable bit (PWRT disabled)
   CONFIG  MCLRE = ON            ; RE3/MCLR pin function select bit (RE3/MCLR pin function is MCLR)
   CONFIG  CP = OFF              ; Code Protection bit (Program memory code protection is disabled)
@@ -60,21 +60,22 @@ MAIN:  ;Marca el punto de inicio del programa principal.
    BANKSEL PORTD
    CLRF PORTB
    
-   BANKSEL TRISC;Se definen LEDS como salida
-   BCF TRISC, 0
-   BCF TRISC, 1
-   BCF TRISC, 2
-   BCF TRISC, 3
-   BCF TRISC, 4
-   BCF TRISC, 5
-   BCF TRISC, 6
-   BCF TRISC, 7
-   BANKSEL PORTC
-   CLRF PORTC
+   BANKSEL TRISB;Se definen LEDS como salida
+   BCF TRISB, 0
+   BCF TRISB, 1
+   BCF TRISB, 2
+   BCF TRISB, 3
+   BCF TRISB, 4
+   BCF TRISB, 5
+   BCF TRISB, 6
+   BCF TRISB, 7
+   BANKSEL PORTB
+   CLRF PORTB
    
-   BANKSEL TRISE;Se definen LEDS como salida
-   BCF TRISE, 0
-   BCF TRISE, 1
+   BANKSEL TRISE;Se definen LEDS de PORTE
+   BCF TRISE, 0 //Como salida
+   BCF TRISE, 1 //Como salida
+   BCF TRISE, 2 //Como salida
    BANKSEL PORTE
    CLRF PORTE
    
@@ -89,10 +90,17 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     MOVWF NUMERO ;Mover el contenido del registro de trabajo W, a variable numero
     CLRW ;Limpiar registro de trabajo
     
+
     
     
 MainLoop:  
-        
+    
+    
+    BCF		    PORTE,1
+	CALL		DELAY
+    BSF			PORTE,1
+	CALL		DELAY
+    
   ;Inicio de sección botones y condiciones
     BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
@@ -101,11 +109,12 @@ MainLoop:
     GOTO DECREMENTO
     
     
+    
     BTFSC PORTD, 2 ; Si se presiona el botón en RD2...
     GOTO BORRAR	; Ir a subrutina BORRAR
     ;Se limpia el estado de los botones
-     
-    
+    BCF PORTE, 1
+    CLRWDT
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
 BORRAR:
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
@@ -120,8 +129,6 @@ INCREMENTO:
     INCF NUMERO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
     MOVF NUMERO, 0 ;Mover el contenido de la variable NUMERO a W, para monitoreo
      CALL DELAY
-     CALL DELAY
-     CALL DELAY
    ; Llamar a la subrutina si NUMERO es igual a 0
     GOTO CALCULARLEDS
 DECREMENTO:
@@ -131,8 +138,6 @@ DECREMENTO:
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     DECF NUMERO
     MOVF NUMERO, 0
-     CALL DELAY
-     CALL DELAY
      CALL DELAY
      GOTO CALCULARLEDS
    ; Llamar a la subrutina si NUMERO es igual a 0
@@ -217,152 +222,60 @@ CALCULARLEDS:
     GOTO MainLoop
 
 ENCENDERLED0:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x00 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop   
     
 ENCENDERLED1:
-    BSF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x1 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero 
+ GOTO MainLoop   
     
 ENCENDERLED2:
-    BCF PORTC, 0
-    BSF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x2 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop   
     
 ENCENDERLED3:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BSF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x3 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop   
 
 ENCENDERLED4:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BSF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x4 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop   
     
  ENCENDERLED5:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BSF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x5 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop  
+    
  ENCENDERLED6:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BSF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x6 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+  GOTO MainLoop  
+    
   ENCENDERLED7:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BSF PORTC, 6
-    BCF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x7 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+  GOTO MainLoop  
+    
   ENCENDERLED8:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BSF PORTC, 7
-    BCF PORTE, 1
-    BCF PORTE, 2
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x8 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+  GOTO MainLoop 
+    
   ENCENDERLED9:
-    BCF PORTC, 0
-    BCF PORTC, 1
-    BCF PORTC, 2
-    BCF PORTC, 3
-    BCF PORTC, 4
-    BCF PORTC, 5
-    BCF PORTC, 6
-    BCF PORTC, 7
-    BSF PORTE, 0
-    CALL DELAY
-    GOTO MainLoop
+    MOVLW 0x9 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+  GOTO MainLoop 
+
   ENCENDERLED10:
-    BSF PORTC, 0
-    BSF PORTC, 1
-    BSF PORTC, 2
-    BSF PORTC, 3
-    BSF PORTC, 4
-    BSF PORTC, 5
-    BSF PORTC, 6
-    BSF PORTC, 7
-    BSF PORTE, 0
-    CALL DELAY
-    GOTO MainLoop
-  
+    MOVLW 0xFF ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF PORTB ;Mover el contenido del registro de trabajo W, a variable numero
+ GOTO MainLoop   
+   
  
 DELAY: ;Start DELAY subroutine here
         movlw 400 ;Load initial value for the delay
@@ -370,6 +283,7 @@ DELAY: ;Start DELAY subroutine here
         movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
 DELAY_LOOP: ;Start delay loop
+	CLRWDT
         decfsz 0x10, F ;Decrement the f register 0x10 and check if not zero
         goto DELAY_LOOP ;If not then go to the DELAY_LOOP labe
         decfsz 0x11, F ;Else decrement the f register 0x11, check if it is not 0
