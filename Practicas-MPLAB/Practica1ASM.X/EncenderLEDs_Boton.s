@@ -44,31 +44,31 @@ PSECT   MainCode,global,class=CODE,delta=2
 
 MainLoop:
     
-   CLRW;
+   CLRW; ;Limpiar registro de trabajo
    
-    BTFSC PORTC, 0
-	GOTO ENCENDERLED1;
-    BTFSC PORTC, 1
-	GOTO ENCENDERLED2;
+    BTFSC PORTC, 0	;Se revisa si PORTC,0 está presionado
+	GOTO ENCENDERLED1; ;Si está presionado, ir a ENCENDERLED1
+    BTFSC PORTC, 1	;Se revisa si PORTC,1 está presionado
+	GOTO ENCENDERLED2;Si está presionado, ir a ENCENDERLED2
     BTFSS PORTC,0
 	GOTO APAGARLED1;
     BTFSS PORTC,1
 	GOTO APAGARLED2;
 
-GOTO MainLoop
+GOTO MainLoop;Se reinicia iteración principal
 	
-
+;Funciones modulares
 ENCENDERLED1:
-    BSF PORTA, 0;
+    BSF PORTA, 0;Cambiar a 1 PORTA,0 (Encender LED en PORTA,0)
     
-    GOTO MainLoop;
+    GOTO MainLoop;Regresar a iteración principal
 ENCENDERLED2:
     BSF PORTB,0;
     GOTO MainLoop;
     
 APAGARLED1:
-    BCF PORTA,0
-    GOTO MainLoop;
+    BCF PORTA,0;Cambiar a 0 PORTA,0 (Apagar LED en PORTA,0)
+    GOTO MainLoop;Regresar a iteración principal
     
 APAGARLED2:
     BCF PORTB,0;
