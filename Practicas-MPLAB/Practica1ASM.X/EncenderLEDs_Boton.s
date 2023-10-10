@@ -25,16 +25,12 @@
 ;   Section used for main code
 PSECT   MainCode,global,class=CODE,delta=2
   ;Configurar pin 0 del PORTA como salida
-    CLRF PORTA	;Limpiar puerto A
-   BANKSEL PORTA ;Seleccionar banco de memoria puerto A
-   BANKSEL TRISA ;Selecciono banco de memoria de pines del puero A
-   BCF TRISA,0 ;Definir el pin 0 del puerto A como salida (0)
-   BANKSEL PORTA
    ;Configurar pin 0 del PORTB como salida
     CLRF PORTB
    BANKSEL PORTB
    BANKSEL TRISB
    BCF TRISB,0
+   BCF TRISB,1
    BANKSEL PORTB
    ;Configurar pines 0 y 1 como entrada en el PORTC
    BANKSEL PORTC
@@ -46,38 +42,37 @@ PSECT   MainCode,global,class=CODE,delta=2
   
    CLRF PORTC
    CLRF PORTB
-   CLRF PORTA
    ;BSF PORTC,1
-   BSF PORTC,0
+   ;BSF PORTC,0
    CLRW 
 MainLoop:
-  
    
     BTFSC PORTC, 0	;Se revisa si PORTC,0 está presionado
 	GOTO ALTERNARLED1; ;Si está presionado, ir a ENCENDERLED1
     BTFSC PORTC,1	;Se revisa si PORTC,1 está presionado
 	GOTO ALTERNARLED2;Si está presionado, ir a ENCENDERLED2
+    BTFSC PORTC,2	;Se revisa si PORTC,1 está presionado
+	GOTO BORRARMEMORIA;Si está presionado, ir a ENCENDERLED2
     
-
+CALL DELAY
 GOTO MainLoop;Se reinicia iteración principal
-	
+
+BORRARMEMORIA:
+    BCF PORTB,0
+    BCF PORTB,1
+    GOTO MainLoop
 ;Funciones modulares
 ALTERNARLED1:
-  BTFSS PORTA,0;Si el LED no está encendido, encender
-  GOTO ENCENDERLED2
-  BTFSC PORTA,0;Si el LED está encendido, apagar
-  GOTO APAGARLED2
+  BTFSS PORTB,0;Si el LED no está encendido, encender
+  GOTO ENCENDERLED1
+  BTFSC PORTB,0;Si el LED está encendido, apagar
+  GOTO APAGARLED1
 ALTERNARLED2:
-    BTFSS PORTB,0;Si el LED no está encendido, encender
-   GOTO ENCENDERLED1
-    BTFSC PORTB,0;Si el LED está encendido, apagar
-    GOTO APAGARLED1
-   
+  BTFSS PORTB,1;Si el LED no está encendido, encender
+  GOTO ENCENDERLED2
+  BTFSC PORTB,1;Si el LED está encendido, apagar
+  GOTO APAGARLED2
     
-   
-    
-    
-    GOTO MainLoop;
     
     ENCENDERLED1:
      BSF PORTB,0
@@ -88,11 +83,11 @@ ALTERNARLED2:
     GOTO MainLoop
     
     ENCENDERLED2:
-     BSF PORTA,0
+     BSF PORTB,1
     GOTO MainLoop
     
     APAGARLED2:
-     BCF PORTA, 0;Cambiar a 1 PORTA,0 (Encender LED en PORTA,0)
+     BCF PORTB, 1;Cambiar a 1 PORTA,0 (Encender LED en PORTA,0)
     GOTO MainLoop
 
  DELAY: ;Start DELAY subroutine here
