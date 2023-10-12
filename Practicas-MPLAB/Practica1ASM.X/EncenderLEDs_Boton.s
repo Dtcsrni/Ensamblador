@@ -26,26 +26,26 @@
 PSECT   MainCode,global,class=CODE,delta=2
   ;Configurar pin 0 del PORTA como salida
    ;Configurar pin 0 del PORTB como salida
-    CLRF PORTB
+   CLRF PORTB
    BANKSEL PORTB
    BANKSEL TRISB
    BCF TRISB,0
    BCF TRISB,1
    BANKSEL PORTB
    ;Configurar pines 0 y 1 como entrada en el PORTC
-   BANKSEL PORTC
    CLRF PORTC
+   BANKSEL PORTC
    BANKSEL TRISC
-   BCF TRISC,0
-   BCF TRISC,1
-   BCF TRISC,2
-   BCF TRISC,3
+   BSF TRISC,0
+   BSF TRISC,1
+   BSF TRISC,2
+   BSF TRISC,3
    BANKSEL PORTC
   
    CLRF PORTC
    CLRF PORTB
    
-   CLRW 
+   CLRW ;Se limpia w o registro de trabajo
 MainLoop:
     
     BTFSC PORTC,0	;Se revisa si PORTC,0 está presionado
@@ -72,14 +72,14 @@ ACTIVARTODOS:
 ;Funciones modulares
 ALTERNARLED1:
   BTFSS PORTB,0;Si el LED no está encendido, encender
-  GOTO ENCENDERLED1
+    GOTO ENCENDERLED1
   BTFSC PORTB,0;Si el LED está encendido, apagar
-  GOTO APAGARLED1
+    GOTO APAGARLED1
 ALTERNARLED2:
   BTFSS PORTB,1;Si el LED no está encendido, encender
-  GOTO ENCENDERLED2
+    GOTO ENCENDERLED2
   BTFSC PORTB,1;Si el LED está encendido, apagar
-  GOTO APAGARLED2
+    GOTO APAGARLED2
     
     
     ENCENDERLED1:
