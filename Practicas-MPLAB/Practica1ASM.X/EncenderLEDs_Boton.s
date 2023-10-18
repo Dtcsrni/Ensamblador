@@ -13,7 +13,7 @@
   CONFIG  BOREN = ON            ; Brown Out Reset Selection bits (BOR enabled)
   CONFIG  IESO = ON             ; Internal External Switchover bit (Internal/External Switchover mode is enabled)
   CONFIG  FCMEN = ON            ; Fail-Safe Clock Monitor Enabled bit (Fail-Safe Clock Monitor is enabled)
-  CONFIG  LVP = ON              ; Low Voltage Programming Enable bit (RB3/PGM pin has PGM function, low voltage programming enabled)
+  CONFIG  LVP = OFF             ; Low Voltage Programming Enable bit (RB3/PGM pin has PGM function, low voltage programming enabled)
 
 ; CONFIG2
   CONFIG  BOR4V = BOR40V        ; Brown-out Reset Selection bit (Brown-out Reset set to 4.0V)
@@ -30,7 +30,8 @@ PSECT   MainCode,global,class=CODE,delta=2
    BANKSEL PORTB
    BANKSEL TRISB
    BCF TRISB,0
-   BCF TRISB,1
+   BCF TRISB,1 
+   BCF TRISB,2
    BANKSEL PORTB
    ;Configurar pines 0 y 1 como entrada en el PORTC
    CLRF PORTC
@@ -44,9 +45,10 @@ PSECT   MainCode,global,class=CODE,delta=2
   
    CLRF PORTC
    CLRF PORTB
-   
+   BSF PORTB,2
    CLRW ;Se limpia w o registro de trabajo
 MainLoop:
+    
     
     BTFSC PORTC,0	;Se revisa si PORTC,0 está presionado
 	GOTO ALTERNARLED1; ;Si está presionado, ir a ENCENDERLED1
