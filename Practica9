@@ -66,40 +66,42 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
     ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
     ;DELAY para crear una pausa.
-    BCF PORTC,0
-    BCF PORTD,0
+    NUMERO EQU 0x12 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+ 
 MainLoop:
-    BTFSC PORTC,0  ;Revisar si C0 es 1 (Si esta presionado)
-    GOTO ENCENDERLED
+ 
     
+    BTFSC PORTC,0  ;Revisar si C0 es 1 (Si esta presionado)
+    GOTO ENCENDERLED1
+    SECCION2:
     BTFSC PORTD,0  ;Revisar si C0 es 1 (Si esta presionado)
     GOTO ENCENDERLED2
-    
-    //BTFSC PORTC,1  ;Revisar si C1 es 1 (Si esta presionado)
-   // BSF	  PORTA,1  ;En caso de que si, enviar 1 logico a A1
+    SECCION3:
+    CALL DELAY
     
 
-    CALL DELAY ;Llamar subrutina DELAY
+    GOTO APAGARLEDS
         
     
-    CALL APAGARLED
-    CALL LIMPIARPUERTOS
+   
     
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
-ENCENDERLED:
+ENCENDERLED1:
     BSF	  PORTA,0  ;En caso de que si, enviar 1 logico a A0
-    GOTO MainLoop
+    INCF 
+    GOTO SECCION2
 ENCENDERLED2:
     BSF	  PORTB,0  ;En caso de que si, enviar 1 logico a A0
-    GOTO MainLoop
-APAGARLED:
+    INCF NUMERO2
+   GOTO SECCION3
+APAGARLEDS:
     BCF		    PORTA,0 ;Limpiar C0
     BCF		    PORTB,0 ;Limpiar C1
-    GOTO MainLoop
+   GOTO LIMPIARPUERTOS
 LIMPIARPUERTOS:
     BCF PORTC,0
     BCF PORTD,0
-    GOTO MainLoop
+  GOTO MainLoop
     
     ;La subrutina DELAY implementa un retraso utilizando un bucle de decremento 
     ;que espera hasta que los registros de trabajo 0x10 y 0x11 se vuelvan cero.
