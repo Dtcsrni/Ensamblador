@@ -3,7 +3,7 @@
 ; Assembly source line config statements
 
 ; CONFIG1
-  CONFIG  FOSC = INTRC_CLKOUT   ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
+  CONFIG  FOSC = INTRC_NOCLKOUT   ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
   CONFIG  WDTE = ON             ; Watchdog Timer Enable bit (WDT enabled)
   CONFIG  PWRTE = OFF           ; Power-up Timer Enable bit (PWRT disabled)
   CONFIG  MCLRE = ON            ; RE3/MCLR pin function select bit (RE3/MCLR pin function is MCLR)
@@ -45,11 +45,6 @@ MAIN:  ;Marca el punto de inicio del programa principal.
    BANKSEL TRISB
    BCF TRISB,0 ;Set RA0 to output
    BCF TRISB,1 ;Set RA0 to output
-   BCF TRISB,2 ;Set RA0 to output
-   BCF TRISB,3 ;Set RA0 to output
-   BCF TRISB,4 ;Set RA0 to output
-   BCF TRISB,5 ;Set RA0 to output
-   BCF TRISB,6 ;Set RA0 to output
    BANKSEL PORTB
   
    
@@ -64,6 +59,9 @@ MAIN:  ;Marca el punto de inicio del programa principal.
    BCF TRISA, 2
    BCF TRISA, 3
    BCF TRISA, 4
+   BCF TRISA, 5
+   BCF TRISA, 6
+   BCF TRISA, 7
    BANKSEL PORTA
    CLRF PORTA
    
@@ -79,14 +77,16 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
     ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
     ;DELAY para crear una pausa.
-    NUMERO EQU 0x12 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
-    CLRF NUMERO ;Limpio la variable NUMERO
+    CREDITO EQU 0x12 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+    CLRF CREDITO ;Limpio la variable NUMERO
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
-    MOVWF NUMERO ;Mover el contenido del registro de trabajo W, a variable numero
+    MOVWF CREDITO ;Mover el contenido del registro de trabajo W, a variable numero
     CLRW ;Limpiar registro de trabajo
     
 
-    
+    MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+    MOVWF   PORTA  
+    MOVWF   PORTB
     
 MainLoop:  
           
@@ -94,8 +94,8 @@ MainLoop:
     BTFSS PORTC, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
     
-
-
+    
+   
     CLRWDT
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
 
@@ -103,20 +103,20 @@ MainLoop:
 INCREMENTO:
     ; Comparar si NUMERO es igual a 0
     MOVLW 10     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    INCF NUMERO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
-    MOVF NUMERO, 0 ;Mover el contenido de la variable NUMERO a W, para monitoreo
+    INCF CREDITO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
+    MOVF CREDITO, 0 ;Mover el contenido de la variable NUMERO a W, para monitoreo
      CALL DELAY
    ; Llamar a la subrutina si NUMERO es igual a 0
     GOTO CALCULARLEDS
 DECREMENTO:
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    DECF NUMERO
-    MOVF NUMERO, 0
+    DECF CREDITO
+    MOVF CREDITO, 0
      CALL DELAY
      GOTO CALCULARLEDS
    ; Llamar a la subrutina si NUMERO es igual a 0
@@ -125,7 +125,7 @@ DECREMENTO:
 CALCULARLEDS:
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED0
     
@@ -133,7 +133,7 @@ CALCULARLEDS:
     
      ; Comparar si NUMERO es igual a 0
     MOVLW 1     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED1
   
@@ -141,7 +141,7 @@ CALCULARLEDS:
     
     ; Comparar si NUMERO es igual a 0
     MOVLW 2     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED2
    
@@ -149,7 +149,7 @@ CALCULARLEDS:
     
     ; Comparar si NUMERO es igual a 0
     MOVLW 3     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED3
     
@@ -157,15 +157,45 @@ CALCULARLEDS:
     
     ; Comparar si NUMERO es igual a 0
     MOVLW 4     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED4
     
     ; Comparar si NUMERO es igual a 0
     MOVLW 5     ; Cargar el valor 0 en el registro W
-    SUBWF NUMERO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED5
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 6     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED6
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 7     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED7
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 8     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED8
+    
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 9     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED9
+    
+     ; Comparar si NUMERO es igual a 0
+    MOVLW 10     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED10
     
    
     
@@ -200,6 +230,31 @@ ENCENDERLED4:
  ENCENDERLED5:
  MOVLW   0b00011111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+  ENCENDERLED6:
+ MOVLW   0b00111111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+  ENCENDERLED7:
+ MOVLW   0b01111111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+  ENCENDERLED8:
+ MOVLW   0b11111111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+  ENCENDERLED9:
+ MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTB        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+  ENCENDERLED10:
+ MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTB        ; Aplicar la máscara al puerto A
  GOTO MainLoop  
     
 
