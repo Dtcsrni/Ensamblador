@@ -88,7 +88,7 @@ MainLoop:
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
 ENCENDERLED1:
     BSF	  PORTA,0  ;En caso de que si, enviar 1 logico a A0
-    INCF 
+   
     GOTO SECCION2
 ENCENDERLED2:
     BSF	  PORTB,0  ;En caso de que si, enviar 1 logico a A0
