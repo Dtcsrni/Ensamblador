@@ -45,6 +45,7 @@ MAIN:  ;Marca el punto de inicio del programa principal.
    BANKSEL TRISB
    BCF TRISB,0 ;Set RA0 to output
    BCF TRISB,1 ;Set RA0 to output
+   BCF TRISB,2 ;Set RA0 to output
    BANKSEL PORTB
   
    
@@ -95,7 +96,10 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     MOVWF   PORTB
     
 MainLoop:  
-    
+    BSF PORTB, 2//Encender y apagar led
+
+
+
     BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO2
     SECCION2:      
