@@ -77,10 +77,16 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
     ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
     ;DELAY para crear una pausa.
-    CREDITO EQU 0x12 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+    CREDITO EQU 0x20 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
     CLRF CREDITO ;Limpio la variable NUMERO
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
     MOVWF CREDITO ;Mover el contenido del registro de trabajo W, a variable numero
+    CLRW ;Limpiar registro de trabajo
+    
+    MODO EQU 0x21 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+    CLRF MODO ;Limpio la variable NUMERO
+    MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
+    MOVWF MODO ;Mover el contenido del registro de trabajo W, a variable numero
     CLRW ;Limpiar registro de trabajo
     
 
@@ -89,10 +95,15 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     MOVWF   PORTB
     
 MainLoop:  
-          
+    
+    BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
+    GOTO INCREMENTO2
+    SECCION2:      
   ;Inicio de sección botones y condiciones
     BTFSS PORTC, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
+    
+    
     
     
    
@@ -110,6 +121,17 @@ INCREMENTO:
      CALL DELAY
    ; Llamar a la subrutina si NUMERO es igual a 0
     GOTO CALCULARLEDS
+INCREMENTO2:
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 4     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    INCF MODO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
+    MOVF MODO, 0 ;Mover el contenido de la variable NUMERO a W, para monitoreo
+     CALL DELAY
+   ; Llamar a la subrutina si NUMERO es igual a 0
+    GOTO CALCULARLEDSMODO    
+    
 DECREMENTO:
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
@@ -120,7 +142,36 @@ DECREMENTO:
      CALL DELAY
      GOTO CALCULARLEDS
    ; Llamar a la subrutina si NUMERO es igual a 0
+
+CALCULARLEDSMODO:
+    ; Comparar si NUMERO es igual a 0
+    MOVLW 0     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLEDMODO0
     
+     MOVLW 1     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLEDMODO1
+    
+     MOVLW 2     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLEDMODO2
+    
+    MOVLW 3     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLEDMODO3
+    
+    MOVLW 4     ; Cargar el valor 0 en el registro W
+     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLEDMODO0
+
+    
+       GOTO MainLoop
     
 CALCULARLEDS:
     ; Comparar si NUMERO es igual a 0
@@ -202,6 +253,25 @@ CALCULARLEDS:
     
     GOTO MainLoop
 
+ENCENDERLEDMODO0:
+ MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto 
+ CLRF MODO 
+ GOTO SECCION2 
+ENCENDERLEDMODO1:
+ MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto A
+ GOTO SECCION2  
+ 
+ENCENDERLEDMODO2:
+ MOVLW   0b00000010  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto A
+ GOTO SECCION2  
+ENCENDERLEDMODO3:
+ MOVLW   0b00000100  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto A
+ GOTO SECCION2  
+ 
 ENCENDERLED0:
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto A
