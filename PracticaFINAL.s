@@ -46,6 +46,7 @@ MAIN:  ;Marca el punto de inicio del programa principal.
    BCF TRISB,0 ;Set RA0 to output
    BCF TRISB,1 ;Set RA0 to output
    BCF TRISB,2 ;Set RA0 to output
+   BCF TRISB,7 ;Set RA0 to output
    BANKSEL PORTB
   
    
@@ -91,27 +92,36 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     CLRW ;Limpiar registro de trabajo
     
 
-    MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+    MOVLW   0b00000000  ; Limpiar puertos
     MOVWF   PORTA  
     MOVWF   PORTB
-    
+    MOVWF   PORTE
 MainLoop:  
-    BSF PORTB, 2//Encender y apagar led
-
-
-
-    BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
-    GOTO INCREMENTO2
-    SECCION2:      
-  ;Inicio de sección botones y condiciones
+    CLRWDT
+  
+    BSF   PORTB,7       ; Aplicar la máscara al puerto A
+    CALL DELAY
+    BCF PORTB,7
+    CALL DELAY
+    BSF PORTB,7
+    
+          ; Aplicar la máscara al puerto A
+    SECCION2:
     BTFSS PORTC, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
+    BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
+    GOTO INCREMENTO2
+          
+  ;Inicio de sección botones y condiciones
+   
     
     
     
     
    
-    CLRWDT
+    
+  
+   
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
 
     
@@ -335,12 +345,11 @@ ENCENDERLED4:
    
  
 DELAY: ;Start DELAY subroutine here
-        movlw 400 ;Load initial value for the delay
+        movlw 50 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
         movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
 DELAY_LOOP: ;Start delay loop
-	CLRWDT
         decfsz 0x10, F ;Decrement the f register 0x10 and check if not zero
         goto DELAY_LOOP ;If not then go to the DELAY_LOOP labe
         decfsz 0x11, F ;Else decrement the f register 0x11, check if it is not 0
