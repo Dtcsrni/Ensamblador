@@ -13,7 +13,7 @@
   CONFIG  IESO = OFF            ; Internal External Switchover bit (Internal/External Switchover mode is disabled)
   CONFIG  FCMEN = OFF           ; Fail-Safe Clock Monitor Enabled bit (Fail-Safe Clock Monitor is disabled)
   CONFIG  LVP = OFF             ; Low Voltage Programming Enable bit (RB3 pin has digital I/O, HV on MCLR must be used for programming)
-
+  
 ; CONFIG2
   CONFIG  BOR4V = BOR40V        ; Brown-out Reset Selection bit (Brown-out Reset set to 4.0V)
   CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
@@ -96,6 +96,9 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     MOVWF   PORTA  
     MOVWF   PORTB
     MOVWF   PORTE
+    
+    MOVLW  0b00001000;Configurar el reloj para funcionar a 1 MHZ
+    MOVWF OSCCON
 MainLoop:  
     CLRWDT
   
@@ -339,13 +342,16 @@ ENCENDERLED4:
   ENCENDERLED10:
  MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTB        ; Aplicar la máscara al puerto A
+ CLRF CREDITO
+ CLRF PORTA
+ CALL DELAY
  GOTO MainLoop  
     
 
    
  
 DELAY: ;Start DELAY subroutine here
-        movlw 50 ;Load initial value for the delay
+        movlw 150 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
         movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
