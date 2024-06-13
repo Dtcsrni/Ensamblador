@@ -79,13 +79,13 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
     ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
     ;DELAY para crear una pausa.
-    CREDITO EQU 0x20 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+    CREDITO EQU 0x20 ;Crear variable Credito y asignarla al registro de uso general 0x20
     CLRF CREDITO ;Limpio la variable NUMERO
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
     MOVWF CREDITO ;Mover el contenido del registro de trabajo W, a variable numero
     CLRW ;Limpiar registro de trabajo
     
-    MODO EQU 0x21 ;Crear variable NUMERO y asignarla al registro de uso general 0x12
+    MODO EQU 0x21 ;Crear variable NUMERO y asignarla al registro de uso general 0x21
     CLRF MODO ;Limpio la variable NUMERO
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
     MOVWF MODO ;Mover el contenido del registro de trabajo W, a variable numero
@@ -102,7 +102,7 @@ MAIN:  ;Marca el punto de inicio del programa principal.
 MainLoop:  
     CLRWDT
   
-    BSF   PORTB,7       ; Aplicar la máscara al puerto A
+    BSF   PORTB,7       ; Led de Estado
     CALL DELAY
     BCF PORTB,7
     CALL DELAY
@@ -117,14 +117,7 @@ MainLoop:
           
   ;Inicio de sección botones y condiciones
    
-    
-    
-    
-    
-   
-    
-  
-   
+       
     GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
 
     
