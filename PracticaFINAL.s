@@ -98,8 +98,8 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     MOVWF   PORTB
     MOVWF   PORTE
     
-   // MOVLW  0b00001000;Configurar el reloj para funcionar a 1 MHZ
-   // MOVWF OSCCON
+   MOVLW  0b00001000;Configurar el reloj para funcionar a 1 MHZ
+   MOVWF OSCCON
 MainLoop:  
     CLRWDT
   
@@ -125,22 +125,22 @@ MainLoop:
 
 DESPACHAR:
     MOVLW 0     ; Cargar el valor 0 en el registro W
-    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO MainLoop
     
     MOVLW 1     ; Cargar el valor 0 en el registro W
-    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO DESPACHAR1
     
-    MOVLW 5     ; Cargar el valor 0 en el registro W
-    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    MOVLW 2     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO DESPACHAR2
     
-    MOVLW 10     ; Cargar el valor 0 en el registro W
-    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    MOVLW 3     ; Cargar el valor 0 en el registro W
+    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO DESPACHAR1
     
@@ -152,20 +152,25 @@ DESPACHAR1:
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
    MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto   
+ 
+   MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
+ CALL DELAY
+ MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ 
+ MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
- MOVWF   PORTB        ; Aplicar la máscara al puerto 
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
- CLRF CREDITO
- CLRF MODO
- CLRF PORTA
- CLRF PORTB
- CLRF PORTE
- GOTO SECCION2
  
- DESPACHAR2:   
-     MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
@@ -174,7 +179,57 @@ DESPACHAR1:
    MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto   
  
-
+ CLRF CREDITO
+ CLRF MODO
+ CLRF PORTA
+ CLRF PORTB
+ CLRF PORTE
+  CALL DELAY
+ GOTO SECCION2
+ 
+ DESPACHAR2:   
+ MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
+ CALL DELAY
+ MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
+ CALL DELAY
+   MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto   
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00011111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00001111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+ MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTA        ; Aplicar la máscara al puerto 
+ CALL DELAY
+ CALL DELAY
+  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
+ CALL DELAY
+ MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto    
+ CALL DELAY
+   MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
+ MOVWF   PORTE        ; Aplicar la máscara al puerto   
  CALL DELAY
  CLRF CREDITO
  CLRF MODO
