@@ -132,17 +132,36 @@ DESPACHAR:
     MOVLW 1     ; Cargar el valor 0 en el registro W
     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    GOTO DESPACHAR1
+    GOTO COMPARAR
+    
     
     MOVLW 2     ; Cargar el valor 0 en el registro W
     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    GOTO DESPACHAR2
+    GOTO COMPARAR
     
     MOVLW 3     ; Cargar el valor 0 en el registro W
     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO COMPARAR
+    
+COMPARAR:
+    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
+    SUBWF 1, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO DESPACHAR1
+    
+    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
+    SUBWF 5, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO DESPACHAR2
+    
+    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
+    SUBWF 10, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO DESPACHAR2
+    
+    
     
 DESPACHAR1:
  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
@@ -197,30 +216,23 @@ DESPACHAR1:
    MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto   
  CALL DELAY
- CALL DELAY
  MOVLW   0b00011111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
- CALL DELAY
- CALL DELAY
+  CALL DELAY
  MOVLW   0b00001111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
- CALL DELAY
- CALL DELAY
+  CALL DELAY
  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
- CALL DELAY
- CALL DELAY
+  CALL DELAY
  MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
- CALL DELAY
  CALL DELAY
  MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
  CALL DELAY
- CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
- CALL DELAY
  CALL DELAY
   MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
