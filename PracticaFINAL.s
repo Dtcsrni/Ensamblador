@@ -1,6 +1,4 @@
-; PIC16F887 Configuration Bit Settings
-
-; Assembly source line config statements
+; Configuración de los bits del PIC16F887
 
 ; CONFIG1
   CONFIG  FOSC = INTRC_NOCLKOUT   ; Oscillator Selection bits (INTOSC oscillator: CLKOUT function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
@@ -18,69 +16,54 @@
   CONFIG  BOR4V = BOR40V        ; Brown-out Reset Selection bit (Brown-out Reset set to 4.0V)
   CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
 
-// config statements should precede project file includes.
 #include <xc.inc> 
-  ;directiva de inclusión para un archivo de encabezado específico 
-  ;del compilador que proporciona definiciones y configuraciones específicas 
-  ;del microcontrolador PIC16F887.
 
-; PIC16F877A Configuration Bit Settings
+PSECT   MainCode,global,class=CODE,delta=2
 
-;
-;   Section used for main code
-    PSECT   MainCode,global,class=CODE,delta=2
-;  Etiqueta MainCode, es donde se encuentra el código principal.
-; Initialize the PIC hardware
-;
-
-MAIN:  ;Marca el punto de inicio del programa principal.
-  ;serie de instrucciones BANKSEL que se utilizan para seleccionar 
-  ;los bancos de registro adecuados antes de realizar operaciones 
-  ;en puertos específicos. 
-  ;Por ejemplo, BANKSEL TRISB selecciona el banco de registro correcto 
-  ;para configurar el puerto B como salida
-  ;Las instrucciones BCF y BSF se utilizan para borrar y establecer bits 
-  ;en los puertos seleccionados. 
-  ;Por ejemplo, BCF TRISB, 0 configura el primer bit del puerto B como salida.
-   BANKSEL TRISB
-   BCF TRISB,0 ;Set RA0 to output
-   BCF TRISB,1 ;Set RA0 to output
-   BCF TRISB,2 ;Set RA0 to output
-   BCF TRISB,7 ;Set RA0 to output
-   BANKSEL PORTB
+MAIN:  
+  ; Configura los pines de los LEDs como salida
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  BCF TRISB,0
+  BCF TRISB,1
+  BCF TRISB,2
+  BCF TRISB,7
+  BANKSEL PORTB
+  CLRF PORTB
+  ; Configura los pines de los botones como entrada
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  BSF TRISC,0
+  BSF TRISC,1
+  BANKSEL PORTC
+  CLRF PORTC
+   
+  ; Configura los LEDs como salida
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  BCF TRISA, 0
+  BCF TRISA, 1
+  BCF TRISA, 2
+  BCF TRISA, 3
+  BCF TRISA, 4
+  BCF TRISA, 5
+  BCF TRISA, 6
+  BCF TRISA, 7
+  BANKSEL PORTA
+  CLRF PORTA
+   
+  ; Configura los LEDs de PORTE como salida
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  BCF TRISE, 0
+  BCF TRISE, 1
+  BCF TRISE, 2
+  BANKSEL PORTE
+  CLRF PORTE
+   
+; Configura el oscilador interno para funcionar a 8 MHz
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  movlw 0b01110000 ; Configura el IRCF para una frecuencia de 8 MHz
+  movwf OSCCON
+  bcf STATUS, 5 ; Cambia al banco de registros 0
   
-   
-   BANKSEL TRISC
-   BSF TRISC,0 ;Set RA0 to input
-   BSF TRISC,1 ;Set RA0 to input
-   BANKSEL PORTC
-   CLRF PORTC
-   
-   BANKSEL TRISA;Se definen LEDS como salida
-   BCF TRISA, 0
-   BCF TRISA, 1
-   BCF TRISA, 2
-   BCF TRISA, 3
-   BCF TRISA, 4
-   BCF TRISA, 5
-   BCF TRISA, 6
-   BCF TRISA, 7
-   BANKSEL PORTA
-   CLRF PORTA
-   
-   BANKSEL TRISE;Se definen LEDS de PORTE
-   BCF TRISE, 0 //Como salida
-   BCF TRISE, 1 //Como salida
-   BCF TRISE, 2 //Como salida
-   BANKSEL PORTE
-   CLRF PORTE
-   
-   
-    ;Después de configurar los puertos, el programa entra en un bucle principal 
-    ;etiquetado como MainLoop. Este bucle realiza una secuencia de encendido y apagado 
-    ;de un pin específico del puerto B, seguido de una llamada a la subrutina 
-    ;DELAY para crear una pausa.
-    CREDITO EQU 0x20 ;Crear variable Credito y asignarla al registro de uso general 0x20
+   CREDITO EQU 0x20 ;Crear variable Credito y asignarla al registro de uso general 0x20
     CLRF CREDITO ;Limpio la variable NUMERO
     MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
     MOVWF CREDITO ;Mover el contenido del registro de trabajo W, a variable numero
@@ -88,82 +71,127 @@ MAIN:  ;Marca el punto de inicio del programa principal.
     
     MODO EQU 0x21 ;Crear variable NUMERO y asignarla al registro de uso general 0x21
     CLRF MODO ;Limpio la variable NUMERO
-    MOVLW 0 ;Se coloca la literal 4 en el registro de trabajo
-    MOVWF MODO ;Mover el contenido del registro de trabajo W, a variable numero
-    CLRW ;Limpiar registro de trabajo
     
+    ; Define la variable MY_BYTE
+    MY_BYTE EQU 0x20
+; Define las variables
 
-    MOVLW   0b00000000  ; Limpiar puertos
-    MOVWF   PORTA  
-    MOVWF   PORTB
-    MOVWF   PORTE
-    
-   MOVLW  0b00001000;Configurar el reloj para funcionar a 1 MHZ
-   MOVWF OSCCON
+  ; Configura los registros para la comunicación serial
+  bsf STATUS, 5 ; Cambia al banco de registros 1
+  movlw 0b00100000 ; Configura el TXSTA para la transmisión serial
+  movwf TXSTA
+  movlw 0b10000000 ; Configura el RCSTA para la recepción serial
+  movwf RCSTA
+  bcf STATUS, 5 ; Cambia al banco de registros 0
+  movlw 25 ; Configura el SPBRG para una velocidad de baudios de 9600
+  movwf SPBRG
+  bsf PIE1, 5 ; Habilita la interrupción de recepción
+
+  bsf INTCON, 6 ; Habilita las interrupciones periféricas
+; Habilita las interrupciones en cambio de estado para los pines de los botones
+; Habilita las interrupciones en cambio de estado para los pines de los botones
+
+  bsf INTCON, 7 ; Habilita las interrupciones globales
 MainLoop:  
-    CLRWDT
-  
-    BSF   PORTB,7       ; Led de Estado
-    CALL DELAY
-    BCF PORTB,7
-    CALL DELAY
-    BSF PORTB,7
-    
-          ; Aplicar la máscara al puerto A
-    SECCION2:
+  CLRWDT
+  CALL BLINK_LED      ; Parpadea el LED de estado    
+ ; Espera a que se presione un botón
+  ; La detección del botón se manejará en la rutina de servicio de interrupción (ISR)
+; Rutina de servicio de interrupción (ISR)
+       ; Aplicar la máscara al puerto A
+   ; Rutina de servicio de interrupción (ISR) para los botones
+BOTONES:
     BTFSS PORTC, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO
     BTFSC PORTD, 0 ;Si se presiona el botón en RD0...
     GOTO INCREMENTO2
     BTFSC PORTC, 1 ;Si se presiona el botón en RD0...
     GOTO DESPACHAR
+
+  ; Limpia la bandera de interrupción en cambio de estado
+
+
+
           
   ;Inicio de sección botones y condiciones
    
        
-    GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
+  GOTO	    MainLoop            ; Una vez que se completa el retraso, el programa vuelve al bucle principal y repite el proceso.
+  
+
+; Rutina para enviar un byte utilizando EUSART
+SEND_BYTE:
+  MOVF   MY_BYTE, W  ; Mueve el byte que quieres enviar al registro W
+  MOVWF  TXREG       ; Mueve el byte del registro W al registro de transmisión TXREG
+SEND_BYTE_WAIT:
+  btfss  PIR1, 4 ; Espera a que se establezca la bandera de interrupción de transmisión TXIF
+  goto   SEND_BYTE_WAIT
+  return
+; Subrutina para parpadear un LED
+BLINK_LED:
+  BSF   PORTB,7       ; Enciende el LED de estado
+  CALL DELAY          ; Espera
+  BCF PORTB,7         ; Apaga el LED de estado
+  CALL DELAY          ; Espera
+  RETURN
+
+; Rutina para recibir un byte utilizando EUSART
+RECEIVE_BYTE:
+RECEIVE_BYTE_WAIT:
+  btfss PIR1, 5 ; Espera a que se establezca la bandera de interrupción de recepción RCIF
+  goto RECEIVE_BYTE_WAIT
+  movf RCREG, W ; Mueve el byte recibido del registro de recepción RCREG al registro W
+  movwf MY_BYTE ; Mueve el byte del registro W a tu variable MY_BYTE
+  return
 
 DESPACHAR:
+    CALL DELAY
     MOVLW 0     ; Cargar el valor 0 en el registro W
-    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    SUBWF MODO, W    ; Restar MODO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
     GOTO MainLoop
     
-    MOVLW 1     ; Cargar el valor 0 en el registro W
-    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    GOTO COMPARAR
+    MOVLW 1     ; Cargar el valor 1 en el registro W
+    SUBWF MODO, W    ; Restar MODO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
+    GOTO CHECK_CREDITO1
     
+    MOVLW 2     ; Cargar el valor 2 en el registro W
+    SUBWF MODO, W    ; Restar MODO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
+    GOTO CHECK_CREDITO5
     
-    MOVLW 2     ; Cargar el valor 0 en el registro W
-    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    GOTO COMPARAR
+    MOVLW 3     ; Cargar el valor 3 en el registro W
+    SUBWF MODO, W    ; Restar MODO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
+    GOTO CHECK_CREDITO10
     
-    MOVLW 3     ; Cargar el valor 0 en el registro W
-    SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
-    GOTO COMPARAR
-    
-COMPARAR:
-    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
-    SUBWF 1, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+CHECK_CREDITO1:
+    MOVLW 1     ; Cargar el valor 1 en el registro W
+    SUBWF CREDITO, W    ; Restar CREDITO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
     GOTO DESPACHAR1
+    GOTO MainLoop
     
-    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
-    SUBWF 5, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+CHECK_CREDITO5:
+    MOVLW 5     ; Cargar el valor 5 en el registro W
+    SUBWF CREDITO, W    ; Restar CREDITO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
     GOTO DESPACHAR2
+    GOTO MainLoop
     
-    MOVWF CREDITO    ; Cargar el valor 0 en el registro W
-    SUBWF 10, W    ; Restar NUMERO de W y almacenar el resultado en W
-    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+CHECK_CREDITO10:
+    MOVLW 10    ; Cargar el valor 10 en el registro W
+    SUBWF CREDITO, W    ; Restar CREDITO de W y almacenar el resultado en W
+    btfsc STATUS, 2    ; Saltar si el resultado es igual a cero (Z = 1)
     GOTO DESPACHAR2
+    GOTO MainLoop
+
     
     
     
 DESPACHAR1:
+       CALL DELAY
  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
@@ -204,42 +232,54 @@ DESPACHAR1:
  CLRF PORTB
  CLRF PORTE
   CALL DELAY
- GOTO SECCION2
+ GOTO BOTONES
  
  DESPACHAR2:   
+       CALL DELAY
  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
+  CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
+  CALL DELAY
    MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto   
  CALL DELAY
+  CALL DELAY
  MOVLW   0b00011111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
   CALL DELAY
+   CALL DELAY
  MOVLW   0b00001111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
   CALL DELAY
+   CALL DELAY
  MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
   CALL DELAY
+   CALL DELAY
  MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
  CALL DELAY
+  CALL DELAY
  MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
  CALL DELAY
+  CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTA        ; Aplicar la máscara al puerto 
  CALL DELAY
+  CALL DELAY
   MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
+  CALL DELAY
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto    
  CALL DELAY
+  CALL DELAY
    MOVLW   0b00000111  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto   
  CALL DELAY
@@ -248,11 +288,12 @@ DESPACHAR1:
  CLRF PORTA
  CLRF PORTB
  CLRF PORTE
- GOTO SECCION2
+GOTO BOTONES
     
 INCREMENTO:
+    CALL DELAY
     ; Comparar si NUMERO es igual a 0
-    MOVLW 10     ; Cargar el valor 0 en el registro W
+    MOVLW 11     ; Cargar el valor 0 en el registro W
     SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
     BTFSS STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     INCF CREDITO ;Si los valores no son iguales, entonces no es 4, y debe incrementar
@@ -261,6 +302,7 @@ INCREMENTO:
    ; Llamar a la subrutina si NUMERO es igual a 0
     GOTO CALCULARLEDS
 INCREMENTO2:
+    CALL DELAY
     ; Comparar si NUMERO es igual a 0
     MOVLW 4     ; Cargar el valor 0 en el registro W
     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
@@ -272,6 +314,7 @@ INCREMENTO2:
     GOTO CALCULARLEDSMODO    
     
 DECREMENTO:
+    CALL DELAY
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
     SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
@@ -283,6 +326,7 @@ DECREMENTO:
    ; Llamar a la subrutina si NUMERO es igual a 0
 
 CALCULARLEDSMODO:
+    CALL DELAY
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
     SUBWF MODO, W    ; Restar NUMERO de W y almacenar el resultado en W
@@ -313,6 +357,7 @@ CALCULARLEDSMODO:
        GOTO MainLoop
     
 CALCULARLEDS:
+    CALL DELAY
     ; Comparar si NUMERO es igual a 0
     MOVLW 0     ; Cargar el valor 0 en el registro W
     SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
@@ -387,6 +432,12 @@ CALCULARLEDS:
     BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
     GOTO ENCENDERLED10
     
+         ; Comparar si NUMERO es igual a 0
+    MOVLW 11     ; Cargar el valor 0 en el registro W
+    SUBWF CREDITO, W    ; Restar NUMERO de W y almacenar el resultado en W
+    BTFSC STATUS, 2    ; Saltar si el resultado no es igual a cero (Z = 0)
+    GOTO ENCENDERLED11
+    
    
     
     
@@ -396,20 +447,20 @@ ENCENDERLEDMODO0:
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto 
  CLRF MODO 
- GOTO SECCION2 
+GOTO BOTONES
 ENCENDERLEDMODO1:
  MOVLW   0b00000001  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto A
- GOTO SECCION2  
+GOTO BOTONES
  
 ENCENDERLEDMODO2:
  MOVLW   0b00000010  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto A
- GOTO SECCION2  
+GOTO BOTONES
 ENCENDERLEDMODO3:
  MOVLW   0b00000100  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTE        ; Aplicar la máscara al puerto A
- GOTO SECCION2  
+GOTO BOTONES
  
 ENCENDERLED0:
  MOVLW   0b00000000  ; Máscara para activar los bits 0, 1 y 2
@@ -464,8 +515,12 @@ ENCENDERLED4:
   ENCENDERLED10:
  MOVLW   0b00000011  ; Máscara para activar los bits 0, 1 y 2
  MOVWF   PORTB        ; Aplicar la máscara al puerto A
+ GOTO MainLoop  
+ 
+   ENCENDERLED11:
  CLRF CREDITO
  CLRF PORTA
+ CLRF PORTB
  CALL DELAY
  GOTO MainLoop  
     
@@ -473,7 +528,7 @@ ENCENDERLED4:
    
  
 DELAY: ;Start DELAY subroutine here
-        movlw 150 ;Load initial value for the delay
+        movlw 500 ;Load initial value for the delay
         movwf 0x10 ;Copy the value from working reg to the file register 0x10
         movwf 0x11 ;Copy the value from working reg to the file register 0x11
 
@@ -483,6 +538,7 @@ DELAY_LOOP: ;Start delay loop
         decfsz 0x11, F ;Else decrement the f register 0x11, check if it is not 0
         goto DELAY_LOOP ;If not then go to the DELAY_LOOP label
         retlw 0 ;Else return from the subroutine
+	
 
 
     END     MAIN
