@@ -1,94 +1,116 @@
+;=============================================================
+; Práctica 1 - "Hola Mundo" con PIC16F887 en ensamblador pic-as
+; Objetivo:
+;   - Configurar oscilador interno a 8 MHz
+;   - Desactivar funciones analógicas
+;   - Poner RB0 como salida y parpadear un LED con delay por software
+;=============================================================
 
-;Practica 1 - Hola Mundo con PIC16F887
+        PROCESSOR   16F887
+        #include    <xc.inc>            ; SFRs, bits y macros (BANKSEL)
 
-; PIC16F887 Configuration Bit Settings
-  PROCESSOR 16F887
-; Assembly source line config statements
+;-------------------------------------------------------------
+; CONFIG (fuses) ? perfil de laboratorio
+;   Nota: En pic-as se usa CONFIG, no __CONFIG
+;-------------------------------------------------------------
+        CONFIG  FOSC   = INTRC_NOCLKOUT ; Oscilador interno, sin CLKOUT
+        CONFIG  WDTE   = OFF            ; Watchdog deshabilitado (por ahora)
+        CONFIG  PWRTE  = ON             ; Power-up Timer habilitado
+        CONFIG  MCLRE  = ON             ; MCLR como reset externo
+        CONFIG  CP     = OFF            ; Sin protección de código
+        CONFIG  CPD    = OFF            ; Sin protección de EEPROM
+        CONFIG  BOREN  = ON             ; Brown-out Reset habilitado
+        CONFIG  BOR4V  = BOR40V         ; Umbral BOR ~4.0V
+        CONFIG  FCMEN  = OFF            ; Fail-Safe Clock Monitor desactivado
+        CONFIG  IESO   = OFF            ; Int. Switchover desactivado
+        CONFIG  LVP    = OFF            ; Programación de baja tensión off
+        CONFIG  WRT    = OFF            ; Sin write-protect
 
-; CONFIG1
-  CONFIG  FOSC = INTRC_NOCLKOUT ; Oscillator Selection bits (INTOSCIO oscillator: I/O function on RA6/OSC2/CLKOUT pin, I/O function on RA7/OSC1/CLKIN)
-  CONFIG  WDTE = OFF            ; Watchdog Timer Enable bit (WDT disabled and can be enabled by SWDTEN bit of the WDTCON register)
-  CONFIG  PWRTE = OFF           ; Power-up Timer Enable bit (PWRT disabled)
-  CONFIG  MCLRE = ON            ; RE3/MCLR pin function select bit (RE3/MCLR pin function is MCLR)
-  CONFIG  CP = OFF              ; Code Protection bit (Program memory code protection is disabled)
-  CONFIG  CPD = OFF             ; Data Code Protection bit (Data memory code protection is disabled)
-  CONFIG  BOREN = ON            ; Brown Out Reset Selection bits (BOR enabled)
-  CONFIG  IESO = ON             ; Internal External Switchover bit (Internal/External Switchover mode is enabled)
-  CONFIG  FCMEN = ON            ; Fail-Safe Clock Monitor Enabled bit (Fail-Safe Clock Monitor is enabled)
-  CONFIG  LVP = ON              ; Low Voltage Programming Enable bit (RB3/PGM pin has PGM function, low voltage programming enabled)
+;-------------------------------------------------------------
+; VECTORES
+;   0x0000: reset  -> saltamos a INIT
+;   0x0004: int    -> no usamos interrupciones (RETFIE)
+;-------------------------------------------------------------
+        PSECT   resetVec, class=CODE, delta=2
+        ORG     0x0000
+        GOTO    INIT
 
-; CONFIG2
-  CONFIG  BOR4V = BOR40V        ; Brown-out Reset Selection bit (Brown-out Reset set to 4.0V)
-  CONFIG  WRT = OFF             ; Flash Program Memory Self Write Enable bits (Write protection off)
+        PSECT   intVec, class=CODE, delta=2
+        ORG     0x0004
+        RETFIE                      ; Placeholder de ISR (sin interrupciones)
 
-// config statements should precede project file includes.
-#include <xc.inc>
-  
+;-------------------------------------------------------------
+; VARIABLES (RAM en bank0)
+;-------------------------------------------------------------
+        PSECT   udata_bank0, space=1
+R0:     DS 1                         ; Contador externo para delay
+R1:     DS 1                         ; Contador interno para delay
 
-;Vectores
-; 0x0000 reset - Saltamos a INIT
-; 0x0004 int -Definir interrupciones como deshabilitadas
-PSECT resetVec, class=CODE, delta=2
-ORG 0x0000
-GOTO INIT
-  
-PSECT intVect, class=CODE, delta=2
-ORG 0x0004
-RETFIE
-  
-;Variables
-PSECT udata_bank0, space=1
- RETARDO0: DS 1 ;Contador externo del retardo
- RETARDO1: DS 1 ;Contador interno del retardo
+;-------------------------------------------------------------
+; CÓDIGO PRINCIPAL
+;-------------------------------------------------------------
+        PSECT   code, class=CODE, delta=2
 
-BANKSEL OSCCON
-MOVLW 0b01110000
-MHz, SCS=00
-MOVWF OSCCON
-    
-BANKSEL ANSEL ;(ansel Y ANSELH = 0)
-CLRF ANSEL
-CLRF ANSELH
-    
-BANKSEL TRISB; 0 = SALIDA DE PUERTOS B
-CLRF TRISB
-BANKSEL PORTB
-CLRF PORTB
-  
-    
-;-----LOOP PRINCIPAL------
+;-------------------- INIT --------------------
+INIT:
+        ; 1) Reloj interno a 8 MHz:
+        ;    En pic-as usa literales C: 0b..., 0x..., decimales
+        BANKSEL OSCCON
+        MOVLW   0b01110000           ; IRCF=111 (8MHz), SCS=00
+        MOVWF   OSCCON
+
+        ; 2) Todo digital (ANSEL/ANSELH=0)
+        BANKSEL ANSEL
+        CLRF    ANSEL
+        CLRF    ANSELH
+
+        ; 3) Puerto B como salida (RB0->LED)
+        BANKSEL TRISB
+        CLRF    TRISB                ; 0=salida
+        BANKSEL PORTB
+        CLRF    PORTB                ; arranca con LED apagado
+	
+	BANKSEL TRISC 
+	MOVLW	0x01
+	MOVWF	TRISC
+	BANKSEL PORTC
+	MOVWF	PORTC
+
+;-------------------- MAIN LOOP --------------------
 MAIN:
-    ;ENCENDER LED EN RB0
-    BSF PORTB, 0
-    CALL DELAY500MS
-    
-    ;APAGAR LED EN RB0
-    BCF PORTB, 0
-    CALL DELAY500MS
-    
-    GOTO MAIN
-    
-;DELAY500MS APROXIMADAMENTE A FOSC=8MHZ EQUIVALE A 0-5US POR INSTRUCCIÓN
-;BUCLE DOBLE 250X250 CON SOBRECARGA APROX 500US
-    
-DELAY500MS:
-    MOVLW 250 ;MOVER A W = 250
-    MOVWF RETARDO0
-OUTER: 
-    MOVLW 250
-    MOVWF RETARDO1
-INNER:
-    NOP
-    DECFSZ RETARDO1, F
-    GOTO INNER
-    DECFSZ RETARDO0, F
-    GOTO OUTER
-    RETURN
-    
-    END
+	BTFSC PORTC, 0
+	BSF     PORTB, 0
+	
+	BTFSS PORTC, 0
+	BCF     PORTB, 0
+	
+	
+        ; Enciende LED en RB0
+ 
+        CALL    DELAY
+        GOTO    MAIN
 
-    
-  
+	
+
+;-------------------------------------------------------------
+; DELAY3000MS (aprox) a Fosc=8MHz (Tcy=0.5us)
+; - Doble bucle 250x250 con sobrecarga ~500 ms
+; - En pic-as no uses d'250' ? usa 250 (decimal)
+;-------------------------------------------------------------
+DELAY:
+        MOVLW   500                  ; W = 250
+        MOVWF   R0                   ; R0 = 250 (externo)
+OUTER:
+        MOVLW   500                ; W = 250
+        MOVWF   R1                   ; R1 = 250 (interno)
+INNER:
+        NOP                           ; 1 ciclo -> relleno
+        DECFSZ  R1, F                ; R1-- ; salta si llega a 0
+        GOTO    INNER
+        DECFSZ  R0, F                ; R0-- ; salta si llega a 0
+        GOTO    OUTER
+        RETURN	
+        END
 
 
 
